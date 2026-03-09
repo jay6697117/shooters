@@ -1,48 +1,50 @@
 # Requirements: Tiny Toon Duel
 
 **Defined:** 2026-03-09
-**Core Value:** `Player-fired gunshots must feel immediate, readable, and unquestionably confirmed on hit.`
+**Core Value:** `New players should be able to enter Tiny Toon Duel and get a clearly learnable, winnable first match.`
 
 ## v1 Requirements
 
-Requirements for the `v1.0 Gunfeel Pass` milestone. Each maps to exactly one roadmap phase.
+Requirements for the `v1.0 Beginner-Friendly Difficulty Pass` milestone. Each maps to exactly one roadmap phase.
 
-### HIT
+### Difficulty Ladder
 
-- [ ] **HIT-01**: 玩家每次用枪命中角色时都能立即获得明确确认
-- [ ] **HIT-02**: 玩家击杀命中时会收到明显强于普通命中的终结确认
-- [ ] **HIT-03**: 玩家能清晰区分打中角色、打中场景/掩体、以及完全打空
+- [ ] **DIFF-01**: 玩家可以在菜单中按模式选择 `novice`、`easy`、`normal`、`hard` 四档难度，并持久化各模式的选择
+- [ ] **DIFF-02**: 在没有历史存档时，`duel` 默认使用 `novice`，`deathmatch` 默认使用 `easy`
 
-### FEEL
+### Match Pressure
 
-- [ ] **FEEL-01**: `pistol`、`smg`、`shotgun` 各自具备可感知的开火节奏和反馈个性
-- [ ] **FEEL-02**: 命中反馈与开火节奏、`tracer`、`muzzle`、屏幕反馈保持同步，不出现迟到或错位确认
+- [ ] **MODE-01**: 玩家在低难度 `deathmatch` 中会进入更低局面压力的对局，而不是只面对数值稍降的同规模乱斗
 
-### READ
+### Balance
 
-- [ ] **READ-01**: 在 `duel` 中命中确认足够明确，玩家不需要猜测是否打中
-- [ ] **READ-02**: 在 `deathmatch` 中命中确认仍保持可读，不因特效过强而影响追踪目标
+- [ ] **BAL-01**: `novice` 与新的 `easy` 必须明显弱于当前版本的 `easy`，同时 `normal` 与 `hard` 继续保持竞技递进关系
+
+### UX
+
+- [ ] **UX-01**: 难度标签与规则提示使用中文，并且会实时反映当前模式和当前难度对应的实际规则
 
 ## v2 Requirements
 
-### Combat Surface Expansion
+### Gunfeel v1.1 candidate
 
-- **SURF-01**: grenade、barrel、melee 的命中反馈接入统一战斗反馈模型
-- **SURF-02**: 目标侧受击反应扩展为更完整的 hit reaction 系统
+- **GF-01**: 玩家每次用枪命中角色时都能立即获得明确确认
+- **GF-02**: 玩家击杀命中时会收到明显强于普通命中的终结确认
+- **GF-03**: `pistol`、`smg`、`shotgun` 各自具备可感知的开火节奏和反馈个性
 
-### Audio & Presentation
+### Accessibility & Assist
 
-- **AUDP-01**: 枪械命中、击杀与环境碰撞具备稳定的音频确认层
-- **AUDP-02**: 玩家可按偏好切换反馈强度或可读性档位
+- **AST-01**: 玩家可按偏好启用更强的新手保护，例如瞄准辅助、额外减伤或更宽容错
+- **AST-02**: 玩家可按偏好切换反馈强度或可读性档位
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| 手雷、爆炸桶、近战反馈重做 | 本轮只聚焦枪械射击闭环，避免把战斗表面一起拉宽 |
-| 新武器或新模式 | 当前优先修正已有玩法的核心手感，而不是扩展内容 |
-| 新外部音效/美术素材管线 | 本轮默认只使用现有效果与程序化反馈 |
-| 大规模 AI 或战斗系统重写 | 用户反馈的核心问题是 hit confirm，不是整套 combat system 失效 |
+| 枪械 hit confirm / kill confirm 重做 | 已延期为 `v1.1 candidate`，当前先解新手门槛 |
+| 玩家侧辅助瞄准或额外减伤 | 当前里程碑只调 AI 和模式压力，不引入新辅助系统 |
+| 新武器、新模式、新地图 | 当前优先让已有玩法更容易上手，而不是扩内容 |
+| 新外部音效/美术素材管线 | 本轮默认只使用现有资源与文案改动 |
 
 ## Traceability
 
@@ -50,19 +52,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HIT-01 | Phase 2 | Pending |
-| HIT-02 | Phase 2 | Pending |
-| HIT-03 | Phase 1 | Pending |
-| FEEL-01 | Phase 3 | Pending |
-| FEEL-02 | Phase 1 | Pending |
-| READ-01 | Phase 3 | Pending |
-| READ-02 | Phase 3 | Pending |
+| DIFF-01 | Phase 1 | Pending |
+| DIFF-02 | Phase 1 | Pending |
+| MODE-01 | Phase 2 | Pending |
+| UX-01 | Phase 2 | Pending |
+| BAL-01 | Phase 3 | Pending |
 
 **Coverage:**
-- v1 requirements: 7 total
-- Mapped to phases: 7
+- v1 requirements: 5 total
+- Mapped to phases: 5
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-09*
-*Last updated: 2026-03-09 after roadmap creation*
+*Last updated: 2026-03-09 after v1.0 difficulty takeover*

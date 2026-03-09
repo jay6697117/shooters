@@ -4,15 +4,15 @@
 
 See: .planning/PROJECT.md (updated 2026-03-09)
 
-**Core value:** `Player-fired gunshots must feel immediate, readable, and unquestionably confirmed on hit.`
-**Current focus:** Phase 1: Gunfire Outcome Model
+**Core value:** `New players should be able to enter Tiny Toon Duel and get a clearly learnable, winnable first match.`
+**Current focus:** Phase 1: Difficulty Ladder & Persistence
 
 ## Current Position
 
-Phase: 1 of 3 (Gunfire Outcome Model)
+Phase: 1 of 3 (Difficulty Ladder & Persistence)
 Plan: 0 of 0 in current phase
 Status: Ready to plan
-Last activity: 2026-03-09 — Roadmap created for milestone v1.0 Gunfeel Pass
+Last activity: 2026-03-09 — Roadmap rewritten for milestone v1.0 Beginner-Friendly Difficulty Pass
 
 Progress: ░░░░░░░░░░ 0%
 
@@ -40,8 +40,10 @@ Progress: ░░░░░░░░░░ 0%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- v1.0: 优先优化枪械命中确认，而不是扩展战斗表面
-- v1.0: 先做研究，再收敛 requirements 和 roadmap
+- v1.0: 由 `Beginner-Friendly Difficulty Pass` 接管当前 milestone
+- v1.0: 新增 `novice`，并把默认档位整体下调
+- v1.0: 低难度 `deathmatch` 同时降低 AI 压力与对局压力
+- v1.0: gunfeel 工作延后为 `v1.1 candidate`
 
 ### Pending Todos
 
@@ -49,11 +51,11 @@ None yet.
 
 ### Blockers/Concerns
 
-- 当前规划文档仍在初始化阶段，ROADMAP.md 与 REQUIREMENTS.md 尚未创建
-- `kill confirm` 与现有 `killcam` / `near-miss` 的优先级仍需在 Phase 2 细化
+- 当前没有现成自动化测试入口，phase 计划需要明确手工验证矩阵
+- `deathmatch` 的低难度压力下调不能只改文案，必须确保实际人数/生命规则也同步派生
 
 ## Session Continuity
 
 Last session: 2026-03-09 15:35
-Stopped at: Created roadmap and prepared Phase 1 for planning
+Stopped at: Rewrote planning docs for difficulty-first milestone takeover
 Resume file: None

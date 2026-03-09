@@ -741,6 +741,7 @@
 	          <div class="difficultySelect" id="difficultySelect">
 	            <div class="difficultyLabel" id="difficultyLabel">AI 难度</div>
 	            <div class="difficultyButtons">
+	              <button class="difficultyBtn" data-diff="novice" type="button">新手</button>
 	              <button class="difficultyBtn" data-diff="easy" type="button">简单</button>
 	              <button class="difficultyBtn" data-diff="normal" type="button">普通</button>
 	              <button class="difficultyBtn" data-diff="hard" type="button">困难</button>
@@ -947,11 +948,27 @@
 	        drag: 0.06
 	      },
 	      difficulty: {
-	        byMode: { duel: 'easy', deathmatch: 'normal' }, // 'easy' | 'normal' | 'hard'
+	        order: ['novice', 'easy', 'normal', 'hard'],
+	        labels: {
+	          novice: '新手',
+	          easy: '简单',
+	          normal: '普通',
+	          hard: '困难'
+	        },
+	        byMode: { duel: 'novice', deathmatch: 'easy' }, // 'novice' | 'easy' | 'normal' | 'hard'
 	        presets: {
-	          easy: { aiHp: 80, aiDamageMul: 0.75, aiFireRateMul: 0.82, aiSpreadMul: 1.8, aiThinkBase: 0.62, aiThinkJitter: 0.45 },
+	          novice: { aiHp: 65, aiDamageMul: 0.55, aiFireRateMul: 0.65, aiSpreadMul: 2.4, aiThinkBase: 0.95, aiThinkJitter: 0.60 },
+	          easy: { aiHp: 75, aiDamageMul: 0.68, aiFireRateMul: 0.76, aiSpreadMul: 2.0, aiThinkBase: 0.70, aiThinkJitter: 0.48 },
 	          normal: { aiHp: 100, aiDamageMul: 1.0, aiFireRateMul: 1.0, aiSpreadMul: 1.0, aiThinkBase: 0.35, aiThinkJitter: 0.30 },
 	          hard: { aiHp: 110, aiDamageMul: 1.05, aiFireRateMul: 1.12, aiSpreadMul: 0.9, aiThinkBase: 0.26, aiThinkJitter: 0.22 }
+	        },
+	        modeOverrides: {
+	          novice: {
+	            deathmatch: { name: '3人 新手乱斗', playerCount: 3, aiCount: 2, lives: 5 }
+	          },
+	          easy: {
+	            deathmatch: { name: '4人 乱斗', playerCount: 4, aiCount: 3, lives: 4 }
+	          }
 	        }
 	      },
 	      player: {
@@ -1047,6 +1064,7 @@
 	      mode: 'loading',
 	      gameMode: 'duel',
 	      activeGameMode: null,
+	      activeDifficulty: null,
       showLeaderboard: false,
       timeLeft: CONFIG.match.totalTime,
       round: 1,
@@ -1123,12 +1141,14 @@
 	      if (!Number.isNaN(parsed)) state.bestWinTime = parsed;
 	    }
 
+	    CONFIG.difficulty.byMode = normalizeDifficultyMap(CONFIG.difficulty.byMode);
+
 	    const storedDifficulty = localStorage.getItem('tinyToonDuel_aiDifficultyByMode');
 	    if (storedDifficulty) {
 	      try {
 	        const parsed = JSON.parse(storedDifficulty);
 	        if (parsed && typeof parsed === 'object') {
-	          CONFIG.difficulty.byMode = { ...CONFIG.difficulty.byMode, ...parsed };
+	          CONFIG.difficulty.byMode = normalizeDifficultyMap({ ...CONFIG.difficulty.byMode, ...parsed });
 	        }
 	      } catch {}
 	    }
@@ -2590,17 +2610,53 @@
 	      updateDifficultyUI();
 	    }
 
+	    function getAllowedDifficulties() {
+	      return CONFIG.difficulty?.order || ['novice', 'easy', 'normal', 'hard'];
+	    }
+
+	    function isValidDifficulty(difficulty) {
+	      return getAllowedDifficulties().includes(difficulty);
+	    }
+
+	    function sanitizeDifficulty(difficulty, fallback = 'normal') {
+	      return isValidDifficulty(difficulty) ? difficulty : fallback;
+	    }
+
+	    function normalizeDifficultyMap(map) {
+	      const normalized = {};
+	      Object.keys(CONFIG.gameModes || {}).forEach((modeId) => {
+	        const fallback = CONFIG.difficulty?.byMode?.[modeId] || 'normal';
+	        normalized[modeId] = sanitizeDifficulty(map?.[modeId], fallback);
+	      });
+	      return normalized;
+	    }
+
+	    function getDifficultyLabel(difficulty) {
+	      return CONFIG.difficulty?.labels?.[difficulty] || difficulty;
+	    }
+
 	    function getDifficultyForMode(modeId) {
+	      const resolvedModeId = CONFIG.gameModes?.[modeId] ? modeId : 'duel';
 	      const byMode = CONFIG.difficulty?.byMode || {};
-	      return byMode[modeId] || 'normal';
+	      const fallback = CONFIG.difficulty?.byMode?.[resolvedModeId] || 'normal';
+	      return sanitizeDifficulty(byMode[resolvedModeId], fallback);
+	    }
+
+	    function getEffectiveGameMode(modeId) {
+	      const resolvedModeId = CONFIG.gameModes?.[modeId] ? modeId : 'duel';
+	      const difficulty = getDifficultyForMode(resolvedModeId);
+	      const baseMode = CONFIG.gameModes?.[resolvedModeId] || CONFIG.gameModes.duel;
+	      const overrides = CONFIG.difficulty?.modeOverrides?.[difficulty]?.[resolvedModeId] || {};
+	      return { ...baseMode, ...overrides };
 	    }
 
 	    function setDifficultyForMode(modeId, difficulty) {
 	      if (!modeId) return;
-	      const allowed = ['easy', 'normal', 'hard'];
-	      if (!allowed.includes(difficulty)) return;
-	      CONFIG.difficulty.byMode[modeId] = difficulty;
+	      const resolvedModeId = CONFIG.gameModes?.[modeId] ? modeId : null;
+	      if (!resolvedModeId || !isValidDifficulty(difficulty)) return;
+	      CONFIG.difficulty.byMode[resolvedModeId] = difficulty;
 	      localStorage.setItem('tinyToonDuel_aiDifficultyByMode', JSON.stringify(CONFIG.difficulty.byMode));
+	      updateMenuModeCopy();
 	      updateDifficultyUI();
 	    }
 
@@ -2610,9 +2666,9 @@
 	        button.classList.toggle('active', button.dataset.diff === current);
 	      });
 	      if (difficultyLabelEl) {
-	        const modeName = CONFIG.gameModes?.[state.gameMode]?.name || state.gameMode;
-	        const label = current.toUpperCase();
-	        difficultyLabelEl.textContent = `${modeName} AI: ${label}`;
+	        const modeName = getEffectiveGameMode(state.gameMode)?.name || state.gameMode;
+	        const label = getDifficultyLabel(current);
+	        difficultyLabelEl.textContent = `${modeName} AI 难度：${label}`;
 	      }
 	    }
 
@@ -2628,24 +2684,34 @@
 
     function updateMenuModeCopy() {
       if (!modeSubtitleEl || !modeRulesEl) return;
+      const currentDifficulty = getDifficultyForMode(state.gameMode);
+      const difficultyLabel = getDifficultyLabel(currentDifficulty);
       if (state.gameMode === 'deathmatch') {
-        const dm = CONFIG.gameModes.deathmatch;
-        modeSubtitleEl.textContent = 'Chaotic 4-player free-for-all with limited lives.';
-        modeRulesEl.textContent = `${dm.playerCount} players · ${dm.lives} lives · 1:45 time limit · Barrels hurt everyone`;
+        const dm = getEffectiveGameMode('deathmatch');
+        modeSubtitleEl.textContent = currentDifficulty === 'novice'
+          ? '更宽松的乱斗练习场，先熟悉走位、换弹和爆炸桶节奏。'
+          : currentDifficulty === 'easy'
+            ? '保留乱斗热闹感，但把生命和 AI 压力下调一档。'
+            : '多人混战竞技场，活到最后的角色获胜。';
+        modeRulesEl.textContent = `${dm.playerCount} 名角色 · ${dm.lives} 条命 · 1:45 时间限制 · 当前 AI：${difficultyLabel}`;
       } else {
-        modeSubtitleEl.textContent = 'Fast, tight 1v1 duel in a tiny arena.';
-        modeRulesEl.textContent = 'Best of 5 · 1:45 time limit · Barrels hurt both players';
+        modeSubtitleEl.textContent = currentDifficulty === 'novice'
+          ? '更慢、更准、更宽容的 1v1，对第一次上手更友好。'
+          : '微型竞技场 1v1，对枪节奏清晰，适合逐步提难。';
+        modeRulesEl.textContent = `五局三胜 · 1:45 时间限制 · 爆炸桶双方生效 · 当前 AI：${difficultyLabel}`;
       }
     }
 
     function getActiveGameMode() {
-      return CONFIG.gameModes[state.activeGameMode || state.gameMode] || CONFIG.gameModes.duel;
+      return getEffectiveGameMode(state.activeGameMode || state.gameMode);
     }
 
     function applyGameMode(modeId) {
-      const mode = CONFIG.gameModes[modeId] || CONFIG.gameModes.duel;
-      state.activeGameMode = modeId;
-      hud.dataset.gamemode = modeId;
+      const resolvedModeId = CONFIG.gameModes[modeId] ? modeId : 'duel';
+      const mode = getEffectiveGameMode(resolvedModeId);
+      state.activeGameMode = resolvedModeId;
+      state.activeDifficulty = getDifficultyForMode(resolvedModeId);
+      hud.dataset.gamemode = resolvedModeId;
 
       const scale = mode.arenaScale ?? 1;
       CONFIG.arena.width = BASE_ARENA.width * scale;
@@ -2678,7 +2744,7 @@
     }
 
     function startMatch() {
-      if (state.activeGameMode !== state.gameMode) {
+      if (state.activeGameMode !== state.gameMode || state.activeDifficulty !== getDifficultyForMode(state.gameMode)) {
         applyGameMode(state.gameMode);
       }
       const mode = getActiveGameMode();
