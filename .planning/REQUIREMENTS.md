@@ -24,13 +24,13 @@ Requirements for the `v1.0 Beginner-Friendly Difficulty Pass` milestone. Each ma
 
 - [ ] **UX-01**: 难度标签与规则提示使用中文，并且会实时反映当前模式和当前难度对应的实际规则
 
+### Shooting Feedback
+
+- [ ] **GF-01**: 玩家每次用枪命中角色时都能立即获得明确确认
+- [ ] **GF-02**: 玩家击杀命中时会收到明显强于普通命中的终结确认
+- [ ] **GF-03**: `pistol`、`smg`、`shotgun` 各自具备可感知的开火节奏和反馈个性
+
 ## v2 Requirements
-
-### Gunfeel v1.1 candidate
-
-- **GF-01**: 玩家每次用枪命中角色时都能立即获得明确确认
-- **GF-02**: 玩家击杀命中时会收到明显强于普通命中的终结确认
-- **GF-03**: `pistol`、`smg`、`shotgun` 各自具备可感知的开火节奏和反馈个性
 
 ### Accessibility & Assist
 
@@ -41,7 +41,7 @@ Requirements for the `v1.0 Beginner-Friendly Difficulty Pass` milestone. Each ma
 
 | Feature | Reason |
 |---------|--------|
-| 枪械 hit confirm / kill confirm 重做 | 已延期为 `v1.1 candidate`，当前先解新手门槛 |
+| 全面 combat feedback / assist 系统扩展 | 当前只插入 scoped shooting feedback pass；更大范围的反馈系统与辅助能力仍留在后续版本 |
 | 玩家侧辅助瞄准或额外减伤 | 当前里程碑只调 AI 和模式压力，不引入新辅助系统 |
 | 新武器、新模式、新地图 | 当前优先让已有玩法更容易上手，而不是扩内容 |
 | 新外部音效/美术素材管线 | 本轮默认只使用现有资源与文案改动 |
@@ -56,13 +56,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DIFF-02 | Phase 1 | Pending |
 | MODE-01 | Phase 2 | Pending |
 | UX-01 | Phase 2 | Pending |
+| GF-01 | Phase 2.1 | Pending |
+| GF-02 | Phase 2.1 | Pending |
+| GF-03 | Phase 2.1 | Pending |
 | BAL-01 | Phase 3 | Pending |
 
 **Coverage:**
-- v1 requirements: 5 total
-- Mapped to phases: 5
+- v1 requirements: 8 total
+- Mapped to phases: 8
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-09*
-*Last updated: 2026-03-09 after v1.0 difficulty takeover*
+*Last updated: 2026-03-09 after inserting scoped shooting feedback as Phase 2.1*

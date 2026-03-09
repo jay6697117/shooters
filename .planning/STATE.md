@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Beginner-Friendly Difficulty Pass
 status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-09T09:18:59.097Z"
-last_activity: 2026-03-09 — Roadmap rewritten for milestone v1.0 Beginner-Friendly Difficulty Pass
+stopped_at: Phase 1 context gathered; gunfeel work moved to inserted Phase 2.1
+last_updated: "2026-03-09T09:29:43Z"
+last_activity: 2026-03-09 — Converted shooting feedback work from Phase 4 to inserted Phase 2.1 after Phase 2
 progress:
-  total_phases: 3
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 
 ## Current Position
 
-Phase: 1 of 3 (Difficulty Ladder & Persistence)
+Phase: 1 of 4 (Difficulty Ladder & Persistence)
 Plan: 0 of 0 in current phase
 Status: Ready to plan
-Last activity: 2026-03-09 — Roadmap rewritten for milestone v1.0 Beginner-Friendly Difficulty Pass
+Last activity: 2026-03-09 — Converted shooting feedback work from Phase 4 to inserted Phase 2.1 after Phase 2
 
 Progress: ░░░░░░░░░░ 0%
 
@@ -60,6 +60,12 @@ Recent decisions affecting current work:
 - v1.0: 新增 `novice`，并把默认档位整体下调
 - v1.0: 低难度 `deathmatch` 同时降低 AI 压力与对局压力
 - v1.0: gunfeel 工作延后为 `v1.1 candidate`
+- v1.0: 射击反馈优化改为插入在 `Phase 2` 与 `Phase 3` 之间的 `Phase 2.1`
+
+### Roadmap Evolution
+
+- Phase 4 removed: Shooting Feedback & Gunfeel Pass (replaced by inserted work)
+- Phase 2.1 inserted after Phase 2: Shooting Feedback & Gunfeel Pass (URGENT)
 
 ### Pending Todos
 
@@ -73,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-09T09:18:59.095Z
-Stopped at: Phase 1 context gathered
+Stopped at: Phase 1 context gathered; gunfeel work moved to inserted Phase 2.1
 Resume file: .planning/phases/01-difficulty-ladder-persistence/01-CONTEXT.md

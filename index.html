@@ -556,6 +556,58 @@
       backdrop-filter: blur(6px);
     }
 
+    #shotConfirm {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      min-width: 92px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(8, 10, 14, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transform: translate(-50%, -50%) scale(0.82);
+      opacity: 0;
+      pointer-events: none;
+      text-align: center;
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+      will-change: transform, opacity;
+    }
+
+    #shotConfirmGlyph {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 2.2vw, 28px);
+      line-height: 1;
+      letter-spacing: 0.08em;
+    }
+
+    #shotConfirmText {
+      font-size: clamp(9px, 1vw, 11px);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    #shotConfirm[data-kind="player_hit"] {
+      color: #fff4cf;
+      box-shadow: 0 0 24px rgba(255, 214, 74, 0.15);
+    }
+
+    #shotConfirm[data-kind="kill"] {
+      color: #ffc44d;
+      box-shadow: 0 0 28px rgba(255, 138, 61, 0.28);
+    }
+
+    #shotConfirm[data-kind="environment_hit"] {
+      color: #d9e4ef;
+      box-shadow: 0 0 18px rgba(111, 122, 134, 0.18);
+    }
+
     #popups {
       position: absolute;
       inset: 0;
@@ -774,6 +826,10 @@
         <div id="vignette"></div>
         <div id="lowHpVignette"></div>
         <div id="dramaticOverlay"></div>
+        <div id="shotConfirm" data-kind="idle">
+          <div id="shotConfirmGlyph"></div>
+          <div id="shotConfirmText"></div>
+        </div>
         <div id="popups"></div>
         <div id="killCamText">已淘汰</div>
       </div>
@@ -1009,6 +1065,43 @@
       near: 0x4DE7FF
     };
 
+    const weaponFeedbackTuning = {
+      duel: {
+        pistol: {
+          player_hit: { duration: 0.14, opacity: 0.96, pulse: 0.58, hitstop: 0.03, flash: 0.04, shakeTime: 0.05, shakeIntensity: 0.035, throttle: 0.06, glyph: '✦', label: 'HIT' },
+          kill: { duration: 0.22, opacity: 1.0, pulse: 1.0, hitstop: 0.075, flash: 0.075, shakeTime: 0.14, shakeIntensity: 0.10, throttle: 0, glyph: '✹', label: 'K.O.' },
+          environment_hit: { duration: 0.10, opacity: 0.75, pulse: 0.18, hitstop: 0.012, flash: 0.015, shakeTime: 0.02, shakeIntensity: 0.015, throttle: 0.08, glyph: '◌', label: 'CLANG' }
+        },
+        smg: {
+          player_hit: { duration: 0.10, opacity: 0.78, pulse: 0.32, hitstop: 0.014, flash: 0.02, shakeTime: 0.025, shakeIntensity: 0.018, throttle: 0.09, glyph: '•', label: 'HIT' },
+          kill: { duration: 0.18, opacity: 0.96, pulse: 0.82, hitstop: 0.05, flash: 0.05, shakeTime: 0.08, shakeIntensity: 0.055, throttle: 0, glyph: '✦', label: 'K.O.' },
+          environment_hit: { duration: 0.08, opacity: 0.62, pulse: 0.10, hitstop: 0.008, flash: 0.010, shakeTime: 0.015, shakeIntensity: 0.010, throttle: 0.12, glyph: '·', label: 'CLANG' }
+        },
+        shotgun: {
+          player_hit: { duration: 0.18, opacity: 1.0, pulse: 0.88, hitstop: 0.045, flash: 0.05, shakeTime: 0.09, shakeIntensity: 0.065, throttle: 0.08, glyph: '✶', label: 'HIT' },
+          kill: { duration: 0.26, opacity: 1.0, pulse: 1.18, hitstop: 0.09, flash: 0.085, shakeTime: 0.17, shakeIntensity: 0.13, throttle: 0, glyph: '✹', label: 'K.O.' },
+          environment_hit: { duration: 0.12, opacity: 0.82, pulse: 0.22, hitstop: 0.018, flash: 0.018, shakeTime: 0.03, shakeIntensity: 0.02, throttle: 0.10, glyph: '◌', label: 'CLANG' }
+        }
+      },
+      deathmatch: {
+        pistol: {
+          player_hit: { duration: 0.12, opacity: 0.88, pulse: 0.42, hitstop: 0.022, flash: 0.028, shakeTime: 0.03, shakeIntensity: 0.022, throttle: 0.07, glyph: '✦', label: 'HIT' },
+          kill: { duration: 0.18, opacity: 0.96, pulse: 0.82, hitstop: 0.058, flash: 0.055, shakeTime: 0.09, shakeIntensity: 0.065, throttle: 0, glyph: '✹', label: 'K.O.' },
+          environment_hit: { duration: 0.08, opacity: 0.68, pulse: 0.12, hitstop: 0.01, flash: 0.01, shakeTime: 0.015, shakeIntensity: 0.010, throttle: 0.10, glyph: '◌', label: 'CLANG' }
+        },
+        smg: {
+          player_hit: { duration: 0.07, opacity: 0.58, pulse: 0.14, hitstop: 0.006, flash: 0.008, shakeTime: 0.012, shakeIntensity: 0.006, throttle: 0.13, glyph: '•', label: 'HIT' },
+          kill: { duration: 0.16, opacity: 0.90, pulse: 0.68, hitstop: 0.036, flash: 0.04, shakeTime: 0.05, shakeIntensity: 0.032, throttle: 0, glyph: '✦', label: 'K.O.' },
+          environment_hit: { duration: 0.06, opacity: 0.50, pulse: 0.07, hitstop: 0.004, flash: 0.006, shakeTime: 0.010, shakeIntensity: 0.004, throttle: 0.16, glyph: '·', label: 'CLANG' }
+        },
+        shotgun: {
+          player_hit: { duration: 0.15, opacity: 0.94, pulse: 0.68, hitstop: 0.03, flash: 0.035, shakeTime: 0.055, shakeIntensity: 0.040, throttle: 0.10, glyph: '✶', label: 'HIT' },
+          kill: { duration: 0.22, opacity: 1.0, pulse: 0.98, hitstop: 0.072, flash: 0.072, shakeTime: 0.13, shakeIntensity: 0.09, throttle: 0, glyph: '✹', label: 'K.O.' },
+          environment_hit: { duration: 0.10, opacity: 0.74, pulse: 0.16, hitstop: 0.014, flash: 0.012, shakeTime: 0.020, shakeIntensity: 0.014, throttle: 0.12, glyph: '◌', label: 'CLANG' }
+        }
+      }
+    };
+
     const MODEL_YAW_OFFSET = 0; // adjust if character forward differs from -Z
     const SPAWN_POINTS = [
       new THREE.Vector3(-9, 0, 0),
@@ -1046,6 +1139,9 @@
 	    const hitFlash = document.getElementById('hitFlash');
 	    const lowHpVignette = document.getElementById('lowHpVignette');
     const dramaticOverlay = document.getElementById('dramaticOverlay');
+    const shotConfirmEl = document.getElementById('shotConfirm');
+    const shotConfirmGlyphEl = document.getElementById('shotConfirmGlyph');
+    const shotConfirmTextEl = document.getElementById('shotConfirmText');
     const popupsEl = document.getElementById('popups');
     const killCamTextEl = document.getElementById('killCamText');
     const suddenDeathEl = document.getElementById('suddenDeath');
@@ -1096,6 +1192,17 @@
       fovVelocity: 0,
       hitFlashTimer: 0,
       nearMissTimer: 0,
+      shotConfirmTimer: 0,
+      shotConfirmMaxTimer: 0,
+      shotConfirmKind: 'idle',
+      shotConfirmGlyph: '',
+      shotConfirmLabel: '',
+      shotConfirmOpacity: 0,
+      shotFeedbackClock: 0,
+      shotFeedbackCooldowns: Object.create(null),
+      lastShotFeedback: null,
+      lastNearMissAt: -Infinity,
+      lastNearMissTargetTeam: null,
       dramaticTimer: 0,
       dramaticTeam: null,
       timeScale: 1,
@@ -2737,6 +2844,10 @@
       menuOverlay.classList.toggle('visible', mode === 'menu');
       pauseOverlay.classList.toggle('visible', mode === 'paused');
       matchOverlay.classList.toggle('visible', mode === 'matchOver');
+      if (mode === 'menu' || mode === 'matchOver') {
+        clearShotFeedback();
+        resetShotFeedbackHistory();
+      }
       if (mode === 'menu') {
         bannerEl.classList.remove('show');
         suddenDeathEl.classList.remove('show');
@@ -2761,6 +2872,9 @@
       state.killCam = null;
       killCamTextEl.classList.remove('show');
       suddenDeathEl.classList.remove('show');
+      clearShotFeedback();
+      resetShotFeedbackHistory();
+      fx.shotFeedbackCooldowns = Object.create(null);
       state.matchStartTime = performance.now();
       world.entities.forEach((entity) => {
         entity.lives = mode.lives || 1;
@@ -2958,6 +3072,7 @@
       if (fx.hitstopTimer > 0) {
         fx.hitstopTimer -= dt;
       }
+      updateShotFeedbackUI(dt);
     }
 
     function getModeDifficultyPreset(modeId) {
@@ -2976,6 +3091,221 @@
     function getAiTuning(entity) {
       if (!entity || !entity.isAI) return null;
       return getModeDifficultyPreset(state.gameMode);
+    }
+
+    function getWeaponFeedbackProfile(weaponId, modeId = state.gameMode) {
+      const modeKey = modeId === 'deathmatch' ? 'deathmatch' : 'duel';
+      const modeTuning = weaponFeedbackTuning[modeKey] || weaponFeedbackTuning.duel;
+      return modeTuning[weaponId] || modeTuning.pistol;
+    }
+
+    function resetShotFeedbackHistory() {
+      fx.lastShotFeedback = null;
+      fx.lastNearMissAt = -Infinity;
+      fx.lastNearMissTargetTeam = null;
+    }
+
+    function buildShotOrigin(position, forwardBase) {
+      const rightBase = new THREE.Vector3(-forwardBase.z, 0, forwardBase.x);
+      const origin = position.clone();
+      origin.y = 1.05;
+      origin.addScaledVector(forwardBase, 0.9);
+      origin.addScaledVector(rightBase, 0.25);
+      return origin;
+    }
+
+    function getShotOrigin(attacker, forwardBase) {
+      return buildShotOrigin(attacker.position, forwardBase);
+    }
+
+    function clearShotFeedback() {
+      fx.shotConfirmTimer = 0;
+      fx.shotConfirmMaxTimer = 0;
+      fx.shotConfirmKind = 'idle';
+      fx.shotConfirmGlyph = '';
+      fx.shotConfirmLabel = '';
+      fx.shotConfirmOpacity = 0;
+      if (!shotConfirmEl) return;
+      shotConfirmEl.dataset.kind = 'idle';
+      shotConfirmEl.style.opacity = '0';
+      shotConfirmEl.style.transform = 'translate(-50%, -50%) scale(0.82)';
+      shotConfirmGlyphEl.textContent = '';
+      shotConfirmTextEl.textContent = '';
+    }
+
+    function updateShotFeedbackUI(dt) {
+      fx.shotFeedbackClock += dt;
+      if (!shotConfirmEl) return;
+      if (fx.shotConfirmTimer <= 0 || fx.shotConfirmMaxTimer <= 0) {
+        clearShotFeedback();
+        return;
+      }
+
+      fx.shotConfirmTimer = Math.max(0, fx.shotConfirmTimer - dt);
+      const progress = 1 - (fx.shotConfirmTimer / Math.max(0.0001, fx.shotConfirmMaxTimer));
+      const fadeIn = THREE.MathUtils.clamp(progress / 0.16, 0, 1);
+      const fadeOut = THREE.MathUtils.clamp(fx.shotConfirmTimer / Math.max(0.0001, fx.shotConfirmMaxTimer * 0.82), 0, 1);
+      const opacity = Math.min(fadeIn, fadeOut) * fx.shotConfirmOpacity;
+      const scaleStart = fx.shotConfirmKind === 'kill' ? 0.88 : 0.82;
+      const scaleEnd = fx.shotConfirmKind === 'kill' ? 1.12 : 0.98;
+      const scale = THREE.MathUtils.lerp(scaleStart, scaleEnd, Math.sin(Math.min(1, progress) * Math.PI * 0.75));
+
+      shotConfirmEl.style.opacity = String(opacity);
+      shotConfirmEl.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(3)})`;
+
+      if (fx.shotConfirmTimer <= 0) {
+        clearShotFeedback();
+      }
+    }
+
+    function canPresentShotFeedback(weaponId, outcome, throttle) {
+      if (!throttle || throttle <= 0) return true;
+      const key = `${weaponId}:${outcome}`;
+      const lastAt = fx.shotFeedbackCooldowns[key] ?? -Infinity;
+      if (fx.shotFeedbackClock - lastAt < throttle) return false;
+      fx.shotFeedbackCooldowns[key] = fx.shotFeedbackClock;
+      return true;
+    }
+
+    function recordShotFeedbackEvent(attacker, shotResult, config = null) {
+      if (!attacker || attacker.isAI || attacker !== getPlayer()) return;
+      fx.lastShotFeedback = {
+        outcome: shotResult.outcome,
+        weaponId: shotResult.weaponId,
+        label: config?.label || (shotResult.outcome === 'miss' ? 'MISS' : shotResult.outcome.toUpperCase()),
+        at: Number(fx.shotFeedbackClock.toFixed(3))
+      };
+    }
+
+    function resolveShotPellet(attacker, origin, end) {
+      const coverHit = findCoverHit(origin, end);
+      const targetHit = findClosestPlayerHit(origin, end, attacker);
+      const barrelHit = findBarrelHit(origin, end);
+
+      let hitType = null;
+      let hit = null;
+      let hitT = null;
+
+      if (coverHit) {
+        hitType = 'cover';
+        hit = coverHit.cover;
+        hitT = coverHit.t;
+      }
+
+      if (targetHit && (hitT === null || targetHit.t < hitT)) {
+        hitType = 'player';
+        hit = targetHit.entity;
+        hitT = targetHit.t;
+      }
+
+      if (barrelHit && (hitT === null || barrelHit.t < hitT)) {
+        hitType = 'barrel';
+        hit = barrelHit.barrel;
+        hitT = barrelHit.t;
+      }
+
+      const endT = hitT !== null ? hitT : 1;
+      const shotEnd = origin.clone().lerp(end, endT);
+      const missCandidate = hitType ? null : findClosestMiss(origin, shotEnd, attacker);
+
+      return {
+        hitType,
+        hit,
+        shotEnd,
+        missCandidate
+      };
+    }
+
+    function commitShotPellet(attacker, weapon, isAI, aiTuning, origin, pelletResult, shotResult, knockState) {
+      if (pelletResult.hitType === 'player') {
+        const damage = weapon.damage * (isAI ? (aiTuning?.aiDamageMul ?? 1) : 1);
+        const didKill = applyDamage(pelletResult.hit, damage, attacker.team, attacker, weapon, origin, pelletResult.shotEnd);
+        shotResult.didAnyHit = true;
+        shotResult.didPlayerHit = true;
+        shotResult.targetTeam = shotResult.targetTeam || pelletResult.hit.team;
+        if (didKill) shotResult.didKill = true;
+        if (!knockState.applied) {
+          applyKnockback(pelletResult.hit, attacker.position, weapon.knockback);
+          knockState.applied = true;
+        }
+        return;
+      }
+
+      if (pelletResult.hitType === 'barrel') {
+        shotResult.didAnyHit = true;
+        shotResult.didEnvironmentHit = true;
+        applyBarrelDamage(pelletResult.hit, weapon.damage, attacker.team);
+        return;
+      }
+
+      if (pelletResult.hitType === 'cover') {
+        shotResult.didAnyHit = true;
+        shotResult.didEnvironmentHit = true;
+        applyCoverDamage(pelletResult.hit, weapon.damage, attacker.team);
+        return;
+      }
+
+      const miss = pelletResult.missCandidate;
+      if (miss && miss.dist < shotResult.closestMissDist) {
+        shotResult.closestMissDist = miss.dist;
+        shotResult.closestMissEnd = pelletResult.shotEnd.clone();
+        shotResult.closestMissTarget = miss.entity;
+      }
+    }
+
+    function finalizeShotResult(shotResult) {
+      let outcome = 'miss';
+      if (shotResult.didKill) {
+        outcome = 'kill';
+      } else if (shotResult.didPlayerHit) {
+        outcome = 'player_hit';
+      } else if (shotResult.didEnvironmentHit) {
+        outcome = 'environment_hit';
+      }
+
+      return {
+        weaponId: shotResult.weaponId,
+        outcome,
+        targetTeam: shotResult.targetTeam,
+        nearMissStart: shotResult.shotStart,
+        nearMissEnd: shotResult.closestMissEnd,
+        nearMissTarget: shotResult.closestMissTarget
+      };
+    }
+
+    function presentShotFeedback(attacker, shotResult) {
+      const isLocalPlayerShot = Boolean(attacker && !attacker.isAI && attacker === getPlayer());
+      const profile = isLocalPlayerShot ? getWeaponFeedbackProfile(shotResult.weaponId) : null;
+      const config = shotResult.outcome !== 'miss' ? profile?.[shotResult.outcome] : null;
+      if (isLocalPlayerShot) {
+        recordShotFeedbackEvent(attacker, shotResult, config);
+      }
+
+      if (shotResult.outcome === 'miss') {
+        if (shotResult.nearMissStart && shotResult.nearMissEnd && shotResult.nearMissTarget) {
+          checkNearMiss(shotResult.nearMissStart, shotResult.nearMissEnd, shotResult.nearMissTarget);
+        }
+        return;
+      }
+
+      if (!isLocalPlayerShot) return;
+      if (!config) return;
+      if (!canPresentShotFeedback(shotResult.weaponId, shotResult.outcome, config.throttle)) return;
+
+      fx.shotConfirmTimer = config.duration;
+      fx.shotConfirmMaxTimer = config.duration;
+      fx.shotConfirmKind = shotResult.outcome;
+      fx.shotConfirmGlyph = config.glyph;
+      fx.shotConfirmLabel = config.label;
+      fx.shotConfirmOpacity = config.opacity;
+      shotConfirmEl.dataset.kind = shotResult.outcome;
+      shotConfirmGlyphEl.textContent = config.glyph;
+      shotConfirmTextEl.textContent = config.label;
+      fx.fovPulse = Math.max(fx.fovPulse, config.pulse);
+      fx.hitFlashTimer = Math.max(fx.hitFlashTimer, config.flash);
+      fx.hitstopTimer = Math.max(fx.hitstopTimer, config.hitstop);
+      fx.shakeTime = Math.max(fx.shakeTime, config.shakeTime);
+      fx.shakeIntensity = Math.max(fx.shakeIntensity, config.shakeIntensity);
     }
 
     function updateGame(dt) {
@@ -3605,18 +3935,22 @@
 
       const aiTuning = isAI ? (getAiTuning(attacker) || null) : null;
       const forwardBase = dir.clone().normalize();
-      const rightBase = new THREE.Vector3(-forwardBase.z, 0, forwardBase.x);
-      const origin = attacker.position.clone();
-      origin.y = 1.05;
-      origin.addScaledVector(forwardBase, 0.9);
-      origin.addScaledVector(rightBase, 0.25);
+      const origin = getShotOrigin(attacker, forwardBase);
 
       const pellets = weapon.pellets || 1;
-      let didHit = false;
-      let closestMissDist = Infinity;
-      let closestMissEnd = null;
-      let closestMissTarget = null;
-      let knockApplied = false;
+      const shotResult = {
+        weaponId: attacker.weapon.id,
+        shotStart: origin.clone(),
+        didAnyHit: false,
+        didPlayerHit: false,
+        didEnvironmentHit: false,
+        didKill: false,
+        targetTeam: null,
+        closestMissDist: Infinity,
+        closestMissEnd: null,
+        closestMissTarget: null
+      };
+      const knockState = { applied: false };
 
       for (let i = 0; i < pellets; i++) {
         const spreadBase = isAI ? weapon.spreadAI : weapon.spreadPlayer;
@@ -3631,34 +3965,8 @@
         );
 
         const end = origin.clone().addScaledVector(dir2, weapon.range);
-        const coverHit = findCoverHit(origin, end);
-        const targetHit = findClosestPlayerHit(origin, end, attacker);
-        const barrelHit = findBarrelHit(origin, end);
-
-        let hitType = null;
-        let hit = null;
-        let hitT = null;
-
-        if (coverHit) {
-          hitType = 'cover';
-          hit = coverHit.cover;
-          hitT = coverHit.t;
-        }
-
-        if (targetHit && (hitT === null || targetHit.t < hitT)) {
-          hitType = 'player';
-          hit = targetHit.entity;
-          hitT = targetHit.t;
-        }
-
-        if (barrelHit && (hitT === null || barrelHit.t < hitT)) {
-          hitType = 'barrel';
-          hit = barrelHit.barrel;
-          hitT = barrelHit.t;
-        }
-
-        const endT = hitT !== null ? hitT : 1;
-        const shotEnd = origin.clone().lerp(end, endT);
+        const pelletResult = resolveShotPellet(attacker, origin, end);
+        const shotEnd = pelletResult.shotEnd;
 
         const isShotgun = pellets > 1;
         const drawTracer = isShotgun || pellets === 1 || i < 3;
@@ -3670,28 +3978,7 @@
           }
         }
 
-        if (hitType === 'player') {
-          didHit = true;
-          const damage = weapon.damage * (isAI ? (aiTuning?.aiDamageMul ?? 1) : 1);
-          applyDamage(hit, damage, attacker.team, attacker, weapon, origin, shotEnd);
-          if (!knockApplied) {
-            applyKnockback(hit, attacker.position, weapon.knockback);
-            knockApplied = true;
-          }
-        } else if (hitType === 'barrel') {
-          didHit = true;
-          applyBarrelDamage(hit, weapon.damage, attacker.team);
-        } else if (hitType === 'cover') {
-          didHit = true;
-          applyCoverDamage(hit, weapon.damage, attacker.team);
-        } else {
-          const miss = findClosestMiss(origin, shotEnd, attacker);
-          if (miss && miss.dist < closestMissDist) {
-            closestMissDist = miss.dist;
-            closestMissEnd = shotEnd.clone();
-            closestMissTarget = miss.entity;
-          }
-        }
+        commitShotPellet(attacker, weapon, isAI, aiTuning, origin, pelletResult, shotResult, knockState);
       }
 
       triggerMuzzle(attacker, forwardBase, weapon);
@@ -3704,9 +3991,7 @@
       attacker.fireCooldown = 1 / fireRate;
       weaponState.ammo -= 1;
 
-      if (!didHit && closestMissEnd && closestMissTarget) {
-        checkNearMiss(origin, closestMissEnd, closestMissTarget);
-      }
+      presentShotFeedback(attacker, finalizeShotResult(shotResult));
     }
 
     function startReload(entity) {
@@ -3752,14 +4037,16 @@
     }
 
     function applyDamage(target, amount, sourceTeam, attacker = null, weapon = null, shotStart = null, shotEnd = null) {
-      if (target.isDead) return;
+      if (target.isDead) return false;
       if (state.suddenDeath) {
         target.hp = 0;
       } else {
         target.hp = Math.max(0, target.hp - amount);
       }
-      fx.hitFlashTimer = 0.06;
-      fx.hitstopTimer = 0.06;
+
+      if (target === getPlayer()) {
+        fx.hitFlashTimer = Math.max(fx.hitFlashTimer, 0.05);
+      }
 
       // Spawn hit effect at target position
       spawnHitEffect(target.position, target.team);
@@ -3768,7 +4055,9 @@
 
       if (target.hp <= 0) {
         handleEntityDeath(target, sourceTeam, attacker, shotStart, shotEnd);
+        return true;
       }
+      return false;
     }
 
     function handleEntityDeath(target, sourceTeam, attacker, shotStart, shotEnd) {
@@ -4452,6 +4741,8 @@
 	      const dist = distancePointToSegmentXZ(target.position, start, end);
 	      if (dist <= CONFIG.nearMissDrama.distance) {
         fx.nearMissTimer = 0.22;
+        fx.lastNearMissAt = Number(fx.shotFeedbackClock.toFixed(3));
+        fx.lastNearMissTargetTeam = target.team;
         fx.dramaticTimer = CONFIG.nearMissDrama.duration;
         fx.dramaticTeam = target.team;
         setTimeScale(CONFIG.nearMissDrama.timeScale, CONFIG.nearMissDrama.duration);
@@ -4494,6 +4785,9 @@
           endMatch(winner);
         } else {
           state.round += 1;
+	          clearShotFeedback();
+	          resetShotFeedbackHistory();
+	          fx.shotFeedbackCooldowns = Object.create(null);
 	          resetEntities();
 	          resetBarrels();
 	          resetCover();
@@ -5400,6 +5694,278 @@
       if (team === 'p4') return COLORS.p4;
       return COLORS.warning;
     }
+
+    function roundValue(value, digits = 2) {
+      return Number(value.toFixed(digits));
+    }
+
+    function getCoverCenter(cover) {
+      if (cover?.mesh?.position) return cover.mesh.position.clone();
+      return new THREE.Vector3(
+        (cover.minX + cover.maxX) * 0.5,
+        0,
+        (cover.minZ + cover.maxZ) * 0.5
+      );
+    }
+
+    function isPointBlocked(point, radius = CONFIG.player.radius) {
+      for (const cover of world.cover) {
+        if (cover.active === false) continue;
+        const expandedMinX = cover.minX - radius;
+        const expandedMaxX = cover.maxX + radius;
+        const expandedMinZ = cover.minZ - radius;
+        const expandedMaxZ = cover.maxZ + radius;
+        if (point.x >= expandedMinX && point.x <= expandedMaxX && point.z >= expandedMinZ && point.z <= expandedMaxZ) {
+          return true;
+        }
+      }
+
+      for (const barrel of world.barrels) {
+        if (!barrel.alive) continue;
+        if (barrel.position.distanceTo(point) <= barrel.radius + radius) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    function stabilizeDebugEntity(entity) {
+      if (!entity) return;
+      entity.velocity.set(0, 0, 0);
+      entity.fireCooldown = 0;
+      entity.dashTimer = 0;
+      entity.dashCooldown = 0;
+      entity.kickCooldown = 0;
+      entity.stunTimer = 0;
+      entity.nearMissCooldown = 0;
+      entity.grenadeCooldown = 0;
+      entity.firedRecentlyTimer = 0;
+      entity.isDead = false;
+      entity.eliminated = false;
+      entity.respawnTimer = 0;
+      if (entity.hp <= 0) {
+        entity.hp = entity.isAI ? getModeDifficultyPreset(state.gameMode).aiHp : 100;
+      }
+      if (entity.weapon?.pending) {
+        entity.weapon.pending = null;
+        entity.weapon.switchTimer = 0;
+        syncWeaponVisibility(entity);
+      }
+      if (entity.ai) {
+        entity.ai.fireIntent = false;
+        entity.ai.desiredMove = null;
+        entity.ai.burstCount = 0;
+        entity.ai.burstCooldown = 0;
+      }
+    }
+
+    function resetDebugShotState() {
+      clearShotFeedback();
+      resetShotFeedbackHistory();
+      fx.shotFeedbackCooldowns = Object.create(null);
+    }
+
+    function forcePlayerWeapon(weaponId) {
+      const player = getPlayer();
+      if (!player || !CONFIG.weapons[weaponId]) return false;
+      const weaponState = getWeaponState(player, weaponId);
+      if (!weaponState) return false;
+      weaponState.unlocked = true;
+      if (weaponState.ammo <= 0 && weaponState.reserve <= 0) {
+        weaponState.ammo = CONFIG.weapons[weaponId].magSize;
+        weaponState.reserve = CONFIG.weapons[weaponId].reserveStart;
+      }
+      player.weapon.id = weaponId;
+      player.weapon.pending = null;
+      player.weapon.switchTimer = 0;
+      syncWeaponVisibility(player);
+      return true;
+    }
+
+    function canShotResolveTo(attacker, fromPosition, aimPoint, expectedHitType, expectedHit) {
+      const dir = aimPoint.clone().sub(fromPosition);
+      dir.y = 0;
+      if (dir.lengthSq() < 0.001) return false;
+      dir.normalize();
+      const origin = buildShotOrigin(fromPosition, dir);
+      const end = origin.clone().addScaledVector(dir, getActiveWeaponConfig(attacker).range);
+      const pellet = resolveShotPellet(attacker, origin, end);
+      if (pellet.hitType !== expectedHitType) return false;
+      if (expectedHit && pellet.hit !== expectedHit) return false;
+      return true;
+    }
+
+    function findDebugFirePosition(attacker, targetPoint, expectedHitType, expectedHit) {
+      const bounds = CONFIG.arena.bounds;
+      const distances = [4.8, 6.2, 7.8, 9.4];
+      const angles = [0, Math.PI, Math.PI / 2, -Math.PI / 2, Math.PI / 4, -Math.PI / 4, (3 * Math.PI) / 4, (-3 * Math.PI) / 4];
+
+      for (const distance of distances) {
+        for (const angle of angles) {
+          const candidate = new THREE.Vector3(
+            targetPoint.x + Math.cos(angle) * distance,
+            0,
+            targetPoint.z + Math.sin(angle) * distance
+          );
+          if (candidate.x < bounds.minX + 1.2 || candidate.x > bounds.maxX - 1.2) continue;
+          if (candidate.z < bounds.minZ + 1.2 || candidate.z > bounds.maxZ - 1.2) continue;
+          if (isPointBlocked(candidate)) continue;
+          if (canShotResolveTo(attacker, candidate, targetPoint, expectedHitType, expectedHit)) {
+            return candidate;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function lineupDebugTeams(targetTeam = 'p2') {
+      const player = getPlayer();
+      const target = getEntityByTeam(targetTeam);
+      if (!player || !target) return false;
+
+      const bounds = CONFIG.arena.bounds;
+      const xPairs = [
+        [bounds.minX + 2.2, bounds.maxX - 2.2],
+        [bounds.minX + 3.5, bounds.maxX - 3.5],
+        [bounds.minX + 1.6, bounds.maxX - 1.6]
+      ];
+      const zCandidates = [0, -6, 6, -3, 3, -8, 8].filter((z) => z > bounds.minZ + 0.8 && z < bounds.maxZ - 0.8);
+
+      for (const z of zCandidates) {
+        for (const [leftX, rightX] of xPairs) {
+          const playerPos = new THREE.Vector3(leftX, 0, z);
+          const targetPos = new THREE.Vector3(rightX, 0, z);
+          if (isPointBlocked(playerPos) || isPointBlocked(targetPos)) continue;
+          if (!hasLineOfSight(playerPos, targetPos)) continue;
+
+          player.position.copy(playerPos);
+          target.position.copy(targetPos);
+          stabilizeDebugEntity(player);
+          stabilizeDebugEntity(target);
+          if (canShotResolveTo(player, player.position, target.position, 'player', target)) {
+            updateAim(player, target.position.clone(), 1 / 60);
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    function firePlayerAtPoint(targetPoint) {
+      const player = getPlayer();
+      if (!player || !targetPoint) return JSON.parse(renderGameToText());
+      stabilizeDebugEntity(player);
+      resetDebugShotState();
+      updateAim(player, targetPoint.clone(), 1 / 60);
+      attemptFire(player, getAimDirection(player, targetPoint), false);
+      return JSON.parse(renderGameToText());
+    }
+
+    function findNearMissAimPoint(attacker, target) {
+      const toTarget = target.position.clone().sub(attacker.position);
+      toTarget.y = 0;
+      if (toTarget.lengthSq() < 0.001) return null;
+      toTarget.normalize();
+      const side = new THREE.Vector3(-toTarget.z, 0, toTarget.x);
+      const offsets = [
+        CONFIG.player.hurtRadius + 0.45,
+        CONFIG.player.hurtRadius + 0.7,
+        CONFIG.player.hurtRadius + 0.95
+      ];
+
+      for (const offset of offsets) {
+        for (const sign of [1, -1]) {
+          const aimPoint = target.position.clone().addScaledVector(side, offset * sign);
+          const dir = aimPoint.clone().sub(attacker.position);
+          dir.y = 0;
+          if (dir.lengthSq() < 0.001) continue;
+          dir.normalize();
+          const origin = buildShotOrigin(attacker.position, dir);
+          const end = origin.clone().addScaledVector(dir, getActiveWeaponConfig(attacker).range);
+          const pellet = resolveShotPellet(attacker, origin, end);
+          if (pellet.hitType === null) return aimPoint;
+        }
+      }
+
+      return null;
+    }
+
+    function renderEntitySnapshot(entity) {
+      return {
+        id: entity.id,
+        team: entity.team,
+        x: roundValue(entity.position.x),
+        z: roundValue(entity.position.z),
+        hp: roundValue(entity.hp, 1)
+      };
+    }
+
+    function createPhase21TestApi() {
+      return {
+        startMatch(modeId = 'duel') {
+          if (CONFIG.gameModes[modeId] && state.gameMode !== modeId) {
+            setGameMode(modeId);
+          }
+          startMatch();
+          resetDebugShotState();
+          return JSON.parse(renderGameToText());
+        },
+        snapshot() {
+          return JSON.parse(renderGameToText());
+        },
+        setPlayerWeapon(weaponId) {
+          forcePlayerWeapon(weaponId);
+          return JSON.parse(renderGameToText());
+        },
+        setEntityHp(team, hp) {
+          const entity = getEntityByTeam(team);
+          if (!entity) return JSON.parse(renderGameToText());
+          entity.hp = Math.max(1, hp);
+          entity.isDead = false;
+          entity.eliminated = false;
+          entity.respawnTimer = 0;
+          return JSON.parse(renderGameToText());
+        },
+        firePlayerAtTeam(team = 'p2') {
+          const target = getEntityByTeam(team);
+          if (!target) return JSON.parse(renderGameToText());
+          lineupDebugTeams(team);
+          return firePlayerAtPoint(target.position.clone());
+        },
+        firePlayerAtBarrel(index = 0) {
+          const player = getPlayer();
+          const barrels = world.barrels.filter((barrel) => barrel.alive);
+          const barrel = barrels[index];
+          if (!player || !barrel) return JSON.parse(renderGameToText());
+          const firePos = findDebugFirePosition(player, barrel.position, 'barrel', barrel);
+          if (firePos) player.position.copy(firePos);
+          return firePlayerAtPoint(barrel.position.clone());
+        },
+        firePlayerAtCover(index = 0) {
+          const player = getPlayer();
+          const covers = world.cover.filter((cover) => cover.active !== false);
+          const cover = covers[index];
+          if (!player || !cover) return JSON.parse(renderGameToText());
+          const center = getCoverCenter(cover);
+          const firePos = findDebugFirePosition(player, center, 'cover', cover);
+          if (firePos) player.position.copy(firePos);
+          return firePlayerAtPoint(center);
+        },
+        firePlayerNearMiss(team = 'p2') {
+          const player = getPlayer();
+          const target = getEntityByTeam(team);
+          if (!player || !target) return JSON.parse(renderGameToText());
+          lineupDebugTeams(team);
+          const aimPoint = findNearMissAimPoint(player, target);
+          if (!aimPoint) return JSON.parse(renderGameToText());
+          return firePlayerAtPoint(aimPoint);
+        }
+      };
+    }
+
     function createReticle() {
       world.reticle = new THREE.Mesh(
         new THREE.RingGeometry(0.18, 0.24, 28),
@@ -5409,6 +5975,57 @@
       world.reticle.position.set(0, 0.02, 0);
       world.scene.add(world.reticle);
     }
+
+    function renderGameToText() {
+      const player = getPlayer();
+      const payload = {
+        mode: state.mode,
+        gameMode: state.gameMode,
+        difficulty: getDifficultyForMode(state.gameMode),
+        shotConfirm: fx.shotConfirmTimer > 0
+          ? { kind: fx.shotConfirmKind, label: fx.shotConfirmLabel }
+          : null,
+        lastShotFeedback: fx.lastShotFeedback ? { ...fx.lastShotFeedback } : null,
+        lastNearMiss: Number.isFinite(fx.lastNearMissAt)
+          ? {
+              at: fx.lastNearMissAt,
+              targetTeam: fx.lastNearMissTargetTeam
+            }
+          : null,
+        player: player ? {
+          x: roundValue(player.position.x),
+          z: roundValue(player.position.z),
+          hp: roundValue(player.hp, 1),
+          weapon: player.weapon?.id || null,
+          ammo: getWeaponState(player)?.ammo ?? null
+        } : null,
+        entities: getAliveEntities().map(renderEntitySnapshot),
+        barrels: world.barrels
+          .filter((barrel) => barrel.alive)
+          .slice(0, 6)
+          .map((barrel, index) => ({
+            index,
+            x: roundValue(barrel.position.x),
+            z: roundValue(barrel.position.z)
+          })),
+        cover: world.cover
+          .filter((cover) => cover.active !== false)
+          .slice(0, 6)
+          .map((cover, index) => {
+            const center = getCoverCenter(cover);
+            return {
+              index,
+              x: roundValue(center.x),
+              z: roundValue(center.z),
+              destructible: Boolean(cover.destructible)
+            };
+          })
+      };
+      return JSON.stringify(payload);
+    }
+
+    window.render_game_to_text = renderGameToText;
+    window.phase21TestApi = createPhase21TestApi();
   </script>
 </body>
 </html>
