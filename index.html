@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tiny Toon Duel</title>
+  <title>卡通大乱斗</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;600;700&display=swap');
@@ -27,8 +27,8 @@
       --warn: #ffc44d;
       --near: #4de7ff;
       --shadow: rgba(0, 0, 0, 0.3);
-      --panel: rgba(15, 18, 22, 0.82);
-      --panel-border: rgba(255, 255, 255, 0.12);
+      --panel: rgba(15, 18, 22, 0.45);
+      --panel-border: rgba(255, 255, 255, 0.08);
       --font-display: 'Bangers', 'Barlow Condensed', sans-serif;
       --font-body: 'Barlow', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
@@ -82,28 +82,30 @@
 
     .panel {
       background: var(--panel);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       border: 1px solid var(--panel-border);
       border-radius: 10px;
-      padding: 10px 14px;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+      padding: 8px 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
 
     #topLeft, #topRight {
       position: absolute;
-      top: 14px;
+      top: 8px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      min-width: 180px;
+      gap: 4px;
+      min-width: 150px;
     }
 
     #topLeft {
-      left: 14px;
+      left: 8px;
       align-items: flex-start;
     }
 
     #topRight {
-      right: 14px;
+      right: 8px;
       align-items: flex-end;
     }
 
@@ -165,8 +167,8 @@
       position: absolute;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      min-width: 180px;
+      gap: 4px;
+      min-width: 150px;
     }
 
     .playerPanel.compact {
@@ -186,10 +188,10 @@
       opacity: 0.8;
     }
 
-    .playerPanel.pos-tl { top: 14px; left: 14px; align-items: flex-start; }
-    .playerPanel.pos-tr { top: 14px; right: 14px; align-items: flex-end; }
-    .playerPanel.pos-bl { bottom: 72px; left: 14px; align-items: flex-start; }
-    .playerPanel.pos-br { bottom: 72px; right: 14px; align-items: flex-end; }
+    .playerPanel.pos-tl { top: 8px; left: 8px; align-items: flex-start; }
+    .playerPanel.pos-tr { top: 8px; right: 8px; align-items: flex-end; }
+    .playerPanel.pos-bl { bottom: 8px; left: 8px; align-items: flex-start; }
+    .playerPanel.pos-br { bottom: 8px; right: 8px; align-items: flex-end; }
 
     .weaponInfo {
       display: flex;
@@ -708,62 +710,62 @@
     <div id="canvasWrap">
 	      <canvas id="scene"></canvas>
 	      <div id="hud" data-mode="menu">
-	        <button id="visualToggle" type="button" aria-label="Toggle visuals">
-	          Visuals <span class="pill" id="visualToggleLabel">GLTF</span>
-	        </button>
+	        <!-- <button id="visualToggle" type="button" aria-label="Toggle visuals">
+	          画面 <span class="pill" id="visualToggleLabel">3D模型</span>
+	        </button> -->
 	        <div id="playerPanels"></div>
 
         <div id="timerPanel">
-          <div id="timer">TIME: 01:45</div>
+          <div id="timer">时间: 01:45</div>
           <div id="roundPips">
             <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
           </div>
         </div>
 
 	        <div id="bottomBar">
-		          <div id="controls" class="panel">WASD Move · Mouse Aim · Click/Hold Fire · 1/2/3 Switch · E Kick · Space Dash · R Reload · G Grenade · Tab Leaderboard · P Pause · V Visuals</div>
-	          <div id="dash">Dash<div class="cooldown"></div></div>
+		          <div id="controls" class="panel">WASD 移动 · 鼠标 瞄准 · 左键/长按 射击 · 1/2/3 切换武器 · E 踢击 · 空格 闪避 · R 换弹 · G 投掷手雷 · Tab 排行榜 · P 暂停 · V 切换画面</div>
+	          <div id="dash">闪避<div class="cooldown"></div></div>
 	        </div>
 
-        <div id="banner">ROUND 1 · FIGHT!</div>
-        <div id="suddenDeath">SUDDEN DEATH</div>
+        <div id="banner">第一回合 · 开始！</div>
+        <div id="suddenDeath">殊死一搏</div>
 
 	        <div id="menuOverlay" class="overlay visible">
-	          <h1>Tiny Toon Duel</h1>
-	          <div class="subtitle" id="modeSubtitle">Fast, tight 1v1 duel in a tiny arena.</div>
+	          <h1>卡通大乱斗</h1>
+	          <div class="subtitle" id="modeSubtitle">快节奏的微型竞技场 1v1 对决。</div>
 	          <div class="modeSelect">
-	            <button class="modeBtn" data-mode="duel">1v1 Duel</button>
-	            <button class="modeBtn" data-mode="deathmatch">4-Player FFA</button>
+	            <button class="modeBtn" data-mode="duel">1v1 对决</button>
+	            <button class="modeBtn" data-mode="deathmatch">4人 乱斗</button>
 	          </div>
-	          <div class="rules" id="modeRules">Best of 5 · 1:45 time limit · Barrels hurt both players</div>
+	          <div class="rules" id="modeRules">五局三胜 · 1:45 时间限制 · 爆炸桶无差别伤害</div>
 	          <div class="difficultySelect" id="difficultySelect">
-	            <div class="difficultyLabel" id="difficultyLabel">AI Difficulty</div>
+	            <div class="difficultyLabel" id="difficultyLabel">AI 难度</div>
 	            <div class="difficultyButtons">
-	              <button class="difficultyBtn" data-diff="easy" type="button">Easy</button>
-	              <button class="difficultyBtn" data-diff="normal" type="button">Normal</button>
-	              <button class="difficultyBtn" data-diff="hard" type="button">Hard</button>
+	              <button class="difficultyBtn" data-diff="easy" type="button">简单</button>
+	              <button class="difficultyBtn" data-diff="normal" type="button">普通</button>
+	              <button class="difficultyBtn" data-diff="hard" type="button">困难</button>
 	            </div>
 	          </div>
-	          <div class="statLine">Press <strong>Enter</strong> to Start</div>
-	          <div id="bestTime">Best win time: --</div>
+	          <div class="statLine">按 <strong>Enter回车键</strong> 开始</div>
+	          <div id="bestTime">最快获胜时间: --</div>
 	        </div>
 
         <div id="pauseOverlay" class="overlay">
-          <h1>Paused</h1>
-          <div class="subtitle">Press P / Esc to resume</div>
+          <h1>已暂停</h1>
+          <div class="subtitle">按 面板 P键 / Esc键 恢复游戏</div>
         </div>
 
         <div id="matchOverlay" class="overlay">
-          <h1 id="matchTitle">Player 1 Wins!</h1>
-          <div class="subtitle" id="matchStats">Match time: 00:00</div>
-          <div class="rules">Press Enter to Rematch</div>
-          <div id="bestTimeEnd">Best win time: --</div>
+          <h1 id="matchTitle">玩家 1 获胜！</h1>
+          <div class="subtitle" id="matchStats">比赛用时: 00:00</div>
+          <div class="rules">按 Enter回车键 重新开始</div>
+          <div id="bestTimeEnd">最快获胜时间: --</div>
         </div>
 
         <div id="leaderboardOverlay" class="overlay">
-          <h1>Leaderboard</h1>
+          <h1>排行榜</h1>
           <div class="leaderboardList" id="leaderboardList"></div>
-          <div class="rules">Hold Tab to view</div>
+          <div class="rules">长按 Tab 键查看</div>
         </div>
 
         <div id="nearMissFlash"></div>
@@ -772,7 +774,7 @@
         <div id="lowHpVignette"></div>
         <div id="dramaticOverlay"></div>
         <div id="popups"></div>
-        <div id="killCamText">ELIMINATED</div>
+        <div id="killCamText">已淘汰</div>
       </div>
     </div>
   </div>
@@ -834,7 +836,7 @@
       },
       weapons: {
 	        pistol: {
-	          name: 'Pistol',
+	          name: '手枪',
 	          fireRate: 2.1,
 	          fireRateAI: 2.0,
 	          damage: 16,
@@ -853,7 +855,7 @@
 	          tracer: 0xffd24d
 	        },
         smg: {
-          name: 'SMG',
+          name: '冲锋枪',
           fireRate: 10,
           fireRateAI: 6.0,
           damage: 8,
@@ -872,7 +874,7 @@
           tracer: 0xf7f7ff
         },
         shotgun: {
-          name: 'Shotgun',
+          name: '霰弹枪',
           fireRate: 1.2,
           fireRateAI: 1.0,
           damage: 12,
@@ -972,8 +974,8 @@
         skyDropVariance: 5
       },
       gameModes: {
-        duel: { name: '1v1 Duel', playerCount: 2, arenaScale: 1.0, aiCount: 1 },
-        deathmatch: { name: '4-Player FFA', playerCount: 4, arenaScale: 1.3, aiCount: 3, lives: 3 }
+        duel: { name: '1v1 对决', playerCount: 2, arenaScale: 1.0, aiCount: 1 },
+        deathmatch: { name: '4人 乱斗', playerCount: 4, arenaScale: 1.3, aiCount: 3, lives: 3 }
       }
     };
 
@@ -1453,6 +1455,13 @@
 	        if (child.isMesh) {
 	          child.castShadow = true;
 	          child.receiveShadow = true;
+	          if (child.material) {
+	            child.material = child.material.clone();
+	            const matName = child.material.name ? child.material.name.toLowerCase() : '';
+	            if (matName.includes('suit') || matName.includes('body') || matName.includes('skin') || !child.material.name) {
+	               child.material.color.setHex(entity.color);
+	            }
+	          }
 	        }
 	      });
 	      entity.visuals.gltf = root;
@@ -2234,10 +2243,10 @@
       const mode = getActiveGameMode();
       const spawnPoints = getSpawnPoints(mode.playerCount);
       const roster = [
-        { id: 'p1', name: 'Player 1 (Green)', team: 'p1', color: COLORS.p1, path: playerPath, isPlayer: true },
-        { id: 'p2', name: 'Player 2 (Red)', team: 'p2', color: COLORS.p2, path: enemyPath, isPlayer: false },
-        { id: 'p3', name: 'Player 3 (Blue)', team: 'p3', color: COLORS.p3, path: enemyPath, isPlayer: false },
-        { id: 'p4', name: 'Player 4 (Gold)', team: 'p4', color: COLORS.p4, path: enemyPath, isPlayer: false }
+        { id: 'p1', name: '玩家 1 (绿)', team: 'p1', color: COLORS.p1, path: playerPath, isPlayer: true },
+        { id: 'p2', name: '玩家 2 (红)', team: 'p2', color: COLORS.p2, path: enemyPath, isPlayer: false },
+        { id: 'p3', name: '玩家 3 (蓝)', team: 'p3', color: COLORS.p3, path: enemyPath, isPlayer: false },
+        { id: 'p4', name: '玩家 4 (金)', team: 'p4', color: COLORS.p4, path: enemyPath, isPlayer: false }
       ];
 
       roster.slice(0, mode.playerCount).forEach((entry, index) => {
@@ -2298,6 +2307,13 @@
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
+          if (child.material) {
+            child.material = child.material.clone();
+            const matName = child.material.name ? child.material.name.toLowerCase() : '';
+            if (matName.includes('suit') || matName.includes('body') || matName.includes('skin') || !child.material.name) {
+               child.material.color.setHex(color);
+            }
+          }
         }
       });
 
@@ -2547,7 +2563,7 @@
     }
 
     function updateBestTimeUI() {
-      const bestText = `Best win time: ${formatTime(state.bestWinTime)}`;
+      const bestText = `最快获胜时间: ${formatTime(state.bestWinTime)}`;
       bestTimeEl.textContent = bestText;
       bestTimeEnd.textContent = bestText;
     }
@@ -2693,7 +2709,7 @@
 	      world.skyDropTimer = CONFIG.pickups.skyDropInterval;
 	      updateRoundPips();
 	      setMode('roundIntro');
-      showBanner(state.gameMode === 'deathmatch' ? 'FREE FOR ALL · FIGHT!' : `ROUND ${state.round} · FIGHT!`);
+      showBanner(state.gameMode === 'deathmatch' ? '自由乱斗 · 开始！' : `第 ${state.round} 回合 · 开始！`);
       setTimeout(() => {
         if (state.mode === 'roundIntro') {
           setMode('playing');
@@ -3724,10 +3740,10 @@
 
       if (target.lives <= 0) {
         target.eliminated = true;
-        spawnPopup('ELIMINATED', popupPos, 'close', 0.9);
+        spawnPopup('已淘汰', popupPos, 'close', 0.9);
       } else {
         target.respawnTimer = 1.2;
-        spawnPopup(`RESPAWN ${target.lives}`, popupPos, 'close', 0.7);
+        spawnPopup(`剩余复活次数: ${target.lives}`, popupPos, 'close', 0.7);
       }
 
       const survivors = world.entities.filter((entity) => entity && !entity.eliminated);
@@ -4381,7 +4397,7 @@
 
         const popupPos = target.position.clone();
         popupPos.y = 1.9;
-        spawnPopup('CLOSE!', popupPos, 'close', 0.6);
+        spawnPopup('擦弹躲闪！', popupPos, 'close', 0.6);
       }
     }
 
@@ -4404,7 +4420,7 @@
       }
 
       setTimeScale(0.8, 0.35);
-      showBanner(winner === 'p1' ? 'PLAYER 1 WINS ROUND' : 'PLAYER 2 WINS ROUND');
+      showBanner(winner === 'p1' ? '玩家 1 赢得本回合' : '玩家 2 赢得本回合');
 
       setTimeout(() => {
         state.roundEnding = false;
@@ -4418,7 +4434,7 @@
 	          clearPickups();
 	          clearGrenades();
 	          setMode('roundIntro');
-	          showBanner(`ROUND ${state.round} · FIGHT!`);
+	          showBanner(`第 ${state.round} 回合 · 开始！`);
           setTimeout(() => {
             if (state.mode === 'roundIntro') setMode('playing');
           }, 1000);
@@ -4557,13 +4573,13 @@
       setMode('matchOver');
       const elapsed = CONFIG.match.totalTime - state.timeLeft;
       if (!winner) {
-        matchTitle.textContent = 'MATCH OVER';
+        matchTitle.textContent = '比赛结束';
       } else {
         const winnerEntity = getEntityByTeam(winner);
         const winnerLabel = winnerEntity?.displayName || (winner === 'p1' ? 'Player 1' : winner === 'p2' ? 'Player 2' : 'Player');
-        matchTitle.textContent = `${winnerLabel.toUpperCase()} WINS!`;
+        matchTitle.textContent = `${winnerLabel.toUpperCase()} 获胜！`;
       }
-      matchStats.textContent = `Match time: ${formatTime(elapsed)}`;
+      matchStats.textContent = `比赛用时: ${formatTime(elapsed)}`;
 
       if (state.gameMode === 'duel' && winner === 'p1') {
         if (state.bestWinTime === null || elapsed < state.bestWinTime) {
@@ -4578,7 +4594,7 @@
       if (state.mode !== 'playing' && state.mode !== 'paused') return;
       if (state.mode === 'playing') {
         setMode('paused');
-        bannerEl.textContent = 'PAUSED';
+        bannerEl.textContent = '已暂停';
         bannerEl.classList.add('show');
       } else if (state.mode === 'paused') {
         bannerEl.classList.remove('show');
@@ -4603,11 +4619,11 @@
         updateWeaponDisplay(panel, entity);
         if (panel.livesInfo) {
           panel.livesInfo.style.display = showLives ? 'block' : 'none';
-          panel.livesInfo.textContent = `Lives: ${Math.max(0, entity.lives ?? 0)}`;
+          panel.livesInfo.textContent = `剩余生命: ${Math.max(0, entity.lives ?? 0)}`;
         }
         panel.panel.classList.toggle('down', entity.isDead || entity.eliminated);
       });
-      timerEl.textContent = `TIME: ${formatTime(state.timeLeft)}`;
+      timerEl.textContent = `剩余时间: ${formatTime(state.timeLeft)}`;
       timerEl.classList.toggle('low', state.timeLeft <= 30);
       const player = getPlayer();
       const cooldownPct = player
@@ -4641,7 +4657,7 @@
         name.textContent = entity.displayName || entity.id;
         label.append(badge, name);
         const lives = document.createElement('span');
-        lives.textContent = `Lives: ${Math.max(0, entity.lives ?? 0)}`;
+        lives.textContent = `剩余生命: ${Math.max(0, entity.lives ?? 0)}`;
         row.append(label, lives);
         leaderboardList.appendChild(row);
       });
@@ -4657,7 +4673,7 @@
       panel.weaponIcon.textContent = weapon.name[0];
       panel.weaponName.textContent = weapon.name;
       if (isSwitching) {
-        panel.weaponAmmo.textContent = 'Switching';
+        panel.weaponAmmo.textContent = '切换中';
         panel.weaponReserve.textContent = '';
       } else {
         panel.weaponAmmo.textContent = `${state.ammo}/${weapon.magSize}`;
