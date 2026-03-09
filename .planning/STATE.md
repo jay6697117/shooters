@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** `Player-fired gunshots must feel immediate, readable, and unquestionably confirmed on hit.`
-**Current focus:** Milestone v1.0 Gunfeel Pass
+**Current focus:** Phase 1: Gunfire Outcome Model
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: -
-Status: Defining requirements
-Last activity: 2026-03-09 — Milestone v1.0 Gunfeel Pass started
+Phase: 1 of 3 (Gunfire Outcome Model)
+Plan: 0 of 0 in current phase
+Status: Ready to plan
+Last activity: 2026-03-09 — Roadmap created for milestone v1.0 Gunfeel Pass
 
 Progress: ░░░░░░░░░░ 0%
 
@@ -50,10 +50,10 @@ None yet.
 ### Blockers/Concerns
 
 - 当前规划文档仍在初始化阶段，ROADMAP.md 与 REQUIREMENTS.md 尚未创建
-- 现有枪械体验问题已知，但具体 phase 仍需通过研究和需求映射收敛
+- `kill confirm` 与现有 `killcam` / `near-miss` 的优先级仍需在 Phase 2 细化
 
 ## Session Continuity
 
 Last session: 2026-03-09 15:35
-Stopped at: Initialized milestone context and started requirement definition
+Stopped at: Created roadmap and prepared Phase 1 for planning
 Resume file: None

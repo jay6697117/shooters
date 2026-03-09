@@ -50,19 +50,19 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HIT-01 | - | Pending roadmap |
-| HIT-02 | - | Pending roadmap |
-| HIT-03 | - | Pending roadmap |
-| FEEL-01 | - | Pending roadmap |
-| FEEL-02 | - | Pending roadmap |
-| READ-01 | - | Pending roadmap |
-| READ-02 | - | Pending roadmap |
+| HIT-01 | Phase 2 | Pending |
+| HIT-02 | Phase 2 | Pending |
+| HIT-03 | Phase 1 | Pending |
+| FEEL-01 | Phase 3 | Pending |
+| FEEL-02 | Phase 1 | Pending |
+| READ-01 | Phase 3 | Pending |
+| READ-02 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 7 total
-- Mapped to phases: 0
-- Unmapped: 7 ⚠️
+- Mapped to phases: 7
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-09*
-*Last updated: 2026-03-09 after milestone v1.0 definition*
+*Last updated: 2026-03-09 after roadmap creation*
