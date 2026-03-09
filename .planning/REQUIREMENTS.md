@@ -9,8 +9,8 @@ Requirements for the `v1.0 Beginner-Friendly Difficulty Pass` milestone. Each ma
 
 ### Difficulty Ladder
 
-- [ ] **DIFF-01**: 玩家可以在菜单中按模式选择 `novice`、`easy`、`normal`、`hard` 四档难度，并持久化各模式的选择
-- [ ] **DIFF-02**: 在没有历史存档时，`duel` 默认使用 `novice`，`deathmatch` 默认使用 `easy`
+- [x] **DIFF-01**: 玩家可以在菜单中按模式选择 `novice`、`easy`、`normal`、`hard` 四档难度，并持久化各模式的选择
+- [x] **DIFF-02**: 在没有历史存档时，`duel` 默认使用 `novice`，`deathmatch` 默认使用 `easy`
 
 ### Match Pressure
 
@@ -52,8 +52,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DIFF-01 | Phase 1 | Pending |
-| DIFF-02 | Phase 1 | Pending |
+| DIFF-01 | Phase 1 | Complete |
+| DIFF-02 | Phase 1 | Complete |
 | MODE-01 | Phase 2 | Pending |
 | UX-01 | Phase 2 | Pending |
 | GF-01 | Phase 2.1 | Pending |
@@ -68,4 +68,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-09*
-*Last updated: 2026-03-09 after inserting scoped shooting feedback as Phase 2.1*
+*Last updated: 2026-03-09 after Phase 1 execution*

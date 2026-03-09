@@ -14,7 +14,7 @@
 - Integer phases (1, 2, 3): Planned milestone spine
 - Decimal phases (2.1, 2.2): Urgent insertions between integer phases
 
-- [ ] **Phase 1: Difficulty Ladder & Persistence** - 增加 `novice`、下调默认档位，并让四档难度按模式稳定持久化
+- [x] **Phase 1: Difficulty Ladder & Persistence** - 增加 `novice`、下调默认档位，并让四档难度按模式稳定持久化 (completed 2026-03-09)
 - [ ] **Phase 2: Difficulty-Aware Match Rules** - 让低难度 `deathmatch` 的人数/生命压力与菜单规则文案从同一配置派生
 - [ ] **Phase 2.1: Shooting Feedback & Gunfeel Pass (INSERTED)** - 在规则体验稳定后插入射击反馈优化，为最终平衡提供更可靠的手感基线
 - [ ] **Phase 3: Balance Pass** - 完成 `novice` 与新 `easy` 的强度下调，并验证四档梯度单调递进
@@ -29,10 +29,11 @@
   1. 玩家在菜单中能看到并选择 `novice`、`easy`、`normal`、`hard` 四档，且不会出现非法档位写入
   2. `duel` 首次进入默认落在 `novice`，`deathmatch` 首次进入默认落在 `easy`
   3. 旧版本已有的 `easy` / `normal` / `hard` 本地存档仍可加载，不需要手动清理
-**Plans:** TBD
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] TBD (run `$gsd-plan-phase 1` to break down)
+- [x] `01-01` Canonical difficulty metadata, defaults, and storage normalization
+- [x] `01-02` Menu labels, button order, and per-mode memory
 
 ### Phase 2: Difficulty-Aware Match Rules
 **Goal:** 让低难度 `deathmatch` 的实际规则与 UI 提示同步收敛
@@ -81,7 +82,7 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Difficulty Ladder & Persistence | 0/0 | Not started | - |
+| 1. Difficulty Ladder & Persistence | 2/2 | Complete    | 2026-03-09 |
 | 2. Difficulty-Aware Match Rules | 0/0 | Not started | - |
 | 2.1 Shooting Feedback & Gunfeel Pass (INSERTED) | 0/0 | Not started | - |
 | 3. Balance Pass | 0/0 | Not started | - |

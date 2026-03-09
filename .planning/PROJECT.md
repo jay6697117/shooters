@@ -25,11 +25,11 @@
 - ✓ 玩家可以在浏览器中启动并完成一局 `duel` 或 `deathmatch` 对战 — pre-planning codebase
 - ✓ 玩家可以使用 `pistol`、`smg`、`shotgun` 进行射击、切枪与换弹 — pre-planning codebase
 - ✓ 游戏已经具备可切换的 AI 难度菜单与按模式存储的难度配置 — pre-planning codebase
+- ✓ 玩家可以按模式选择 `novice`、`easy`、`normal`、`hard` 四档难度，并记住各模式的选择 — Phase 1
+- ✓ 首次进入游戏时，`duel` 默认更适合新手，`deathmatch` 默认比当前版本更温和 — Phase 1
 
 ### Active
 
-- [ ] 玩家可以按模式选择 `novice`、`easy`、`normal`、`hard` 四档难度，并记住各模式的选择
-- [ ] 首次进入游戏时，`duel` 默认更适合新手，`deathmatch` 默认比当前版本更温和
 - [ ] 低难度 `deathmatch` 的实际人数/生命压力与菜单文案保持一致，不再出现“UI 写一套、对局跑一套”
 - [ ] 玩家在普通命中、击杀命中和不同武器开火时都能获得更明确、更可区分的反馈
 
@@ -58,11 +58,11 @@
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| 由 `Beginner-Friendly Difficulty Pass` 接管当前 `v1.0` | 现有 `v1.0 Gunfeel Pass` 尚未执行，且用户要求“先把游戏难度降低” | — Pending |
-| 新增 `novice`，并把默认档位整体下调一档 | 满足“新手玩家友好”的第一进入体验 | — Pending |
-| 低难度 `deathmatch` 同时降低 AI 压力与对局压力 | 只调 AI 数值不足以显著降低多 AI 乱斗门槛 | — Pending |
-| 跳过 research，直接进入 requirements / roadmap / implementation | 本轮是对既有难度系统的重排，不是陌生领域探索 | — Pending |
-| 原大范围 gunfeel 工作仍延后为 `v1.1 candidate`，但当前 milestone 将 scoped shooting feedback 作为 `Phase 2.1` 插入到最终 balance 之前 | 响应试玩反馈，并让最终 balance 建立在更新后的战斗反馈基线上，而不是旧手感上 | — Pending |
+| 由 `Beginner-Friendly Difficulty Pass` 接管当前 `v1.0` | 现有 `v1.0 Gunfeel Pass` 尚未执行，且用户要求“先把游戏难度降低” | 已采纳为当前 milestone 主线 |
+| 新增 `novice`，并把默认档位整体下调一档 | 满足“新手玩家友好”的第一进入体验 | 已在 `12004e1` 落地，并于 Phase 1 fresh 验证通过 |
+| 低难度 `deathmatch` 同时降低 AI 压力与对局压力 | 只调 AI 数值不足以显著降低多 AI 乱斗门槛 | 待 Phase 2 实现 |
+| 跳过 research，直接进入 requirements / roadmap / implementation | 本轮是对既有难度系统的重排，不是陌生领域探索 | 已用于 milestone 重排与 Phase 1 planning |
+| 原大范围 gunfeel 工作仍延后为 `v1.1 candidate`，但当前 milestone 将 scoped shooting feedback 作为 `Phase 2.1` 插入到最终 balance 之前 | 响应试玩反馈，并让最终 balance 建立在更新后的战斗反馈基线上，而不是旧手感上 | 已采纳并写入 roadmap |
 
 ---
-*Last updated: 2026-03-09 after converting scoped shooting feedback into inserted Phase 2.1*
+*Last updated: 2026-03-09 after Phase 1 execution*
