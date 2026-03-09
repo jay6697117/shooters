@@ -39,3 +39,36 @@ Original prompt: PLEASE IMPLEMENT THIS PLAN for the v1.0 beginner-friendly diffi
   - 浏览器自动化确认 `deathmatch` 切到 `normal` 后显示 `4 名角色 · 3 条命`。
   - `develop-web-game` 客户端已产出过验证截图并完成目检；截图产物已在提交前清理，避免把临时文件带入版本库。
   - Playwright 控制台错误检查结果为 0。
+
+## 2026-03-09 Phase 2.1 Implementation Notes
+
+- `index.html`
+  - 在 `attemptFire()` 周围补齐 `resolveShotPellet()`、`commitShotPellet()`、`finalizeShotResult()`、`presentShotFeedback()` 四段式本地 helper，把单次扳机结果收口到 `kill / player_hit / environment_hit / miss`。
+  - 新增 HUD 中心确认层 `#shotConfirm`，把 primary confirm 从现有 tracer / muzzle / shake 中独立出来，并保持 `miss` 不走中心确认。
+  - 新增 `weaponFeedbackTuning`，按 `duel / deathmatch × pistol / smg / shotgun` 集中管理持续时间、opacity、pulse、hitstop、flash、shake 和 throttle。
+  - `shotgun` 已按 trigger-level 聚合，只会给出一个主确认；`smg` 在 `deathmatch` 下采用更严格节流，避免中心 HUD 噪音失控。
+  - `applyDamage()` 现在只返回 kill promotion，不再隐式承担 shooter-side confirm；同时补回“玩家被 AI 打中”时的 defender-side `hitFlash`，避免受击反馈回归。
+  - 新增 `window.render_game_to_text` 的 Phase 2.1 扩展观测字段：`lastShotFeedback`、`lastNearMiss`、`barrels`、`cover`。
+  - 新增 `window.phase21TestApi`，用于本地浏览器内稳定复现实验场景：`startMatch()`、`setPlayerWeapon()`、`setEntityHp()`、`firePlayerAtTeam()`、`firePlayerAtBarrel()`、`firePlayerAtCover()`、`firePlayerNearMiss()`；当场景布置失败时会显式返回 `phase21Action.ok=false` 和 `reason`，避免验证假阳性。
+
+- `.planning`
+  - 新增 `02.1-01-PLAN.md`、`02.1-02-PLAN.md`、`02.1-03-PLAN.md`，把插队 phase 拆成 3 个串行 execute plans。
+
+- 验证计划
+  - 静态检查继续覆盖 HUD 节点、shot helper seam、feedback router、test hook 暴露。
+  - 浏览器验证改为优先使用 `phase21TestApi` 复现 `player_hit / kill / environment_hit / miss`，再补充 `duel` 与 `deathmatch` 的体感目检。
+
+## 2026-03-09 Phase 2.1 Final Verification
+
+- 为了让浏览器验证真正 deterministic，`phase21TestApi` 追加了两个 phase-local helper：`setEntityPosition()` 与 `firePlayerAtPoint()`；这些 helper 默认启用 `zeroSpread`，只影响验证入口，不影响正式玩法射击散布。
+- 最终稳定验证坐标：
+  - 直接命中 lane：`p1=(-10,-7)`，`p2=(-10,-3)`
+  - near-miss lane：`p1=(-6,-7)`，`p2=(-10,-3)`，aim `(-9.5050,-2.5050)`
+- 最终验证结果：
+  - `duel + pistol`：普通命中稳定给出 `player_hit`，击杀稳定给出 `kill`，`kill` 在 final-round `killCam` 切入时仍保持可见。
+  - `duel + barrel / cover`：两者都稳定走 `environment_hit`，标签为弱化的 `CLANG`，不会伪装成人物命中。
+  - `duel + near-miss`：稳定走 `miss`，`lastNearMiss` 被记录，且 `shotConfirm === null`、`shotFeedbackEventCount === 0`。
+  - `duel + shotgun`：单次 trigger pull 只产生一个 primary confirm event，`shotFeedbackEventCount === 1`。
+  - `deathmatch + smg`：4 次快速连射命中把 `p2.hp` 从 `65` 打到 `33`，但 `shotFeedbackEventCount` 始终保持 `1`，证明节流有效。
+  - reset 路径：post-kill round reset、restart、menu load 都会把 `shotConfirm / shotFeedbackEventCount / lastShotFeedback / lastNearMiss` 清空。
+  - Playwright 控制台错误数：`0`。

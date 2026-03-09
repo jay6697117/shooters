@@ -1200,6 +1200,7 @@
       shotConfirmOpacity: 0,
       shotFeedbackClock: 0,
       shotFeedbackCooldowns: Object.create(null),
+      shotFeedbackEventCount: 0,
       lastShotFeedback: null,
       lastNearMissAt: -Infinity,
       lastNearMissTargetTeam: null,
@@ -3100,6 +3101,7 @@
     }
 
     function resetShotFeedbackHistory() {
+      fx.shotFeedbackEventCount = 0;
       fx.lastShotFeedback = null;
       fx.lastNearMissAt = -Infinity;
       fx.lastNearMissTargetTeam = null;
@@ -3292,6 +3294,7 @@
       if (!config) return;
       if (!canPresentShotFeedback(shotResult.weaponId, shotResult.outcome, config.throttle)) return;
 
+      fx.shotFeedbackEventCount += 1;
       fx.shotConfirmTimer = config.duration;
       fx.shotConfirmMaxTimer = config.duration;
       fx.shotConfirmKind = shotResult.outcome;
@@ -4739,7 +4742,8 @@
 	    function checkNearMiss(start, end, target) {
 	      if (target.nearMissCooldown > 0) return;
 	      const dist = distancePointToSegmentXZ(target.position, start, end);
-	      if (dist <= CONFIG.nearMissDrama.distance) {
+	      const threshold = CONFIG.player.hurtRadius + CONFIG.nearMissDrama.distance;
+	      if (dist <= threshold) {
         fx.nearMissTimer = 0.22;
         fx.lastNearMissAt = Number(fx.shotFeedbackClock.toFixed(3));
         fx.lastNearMissTargetTeam = target.team;
@@ -5826,41 +5830,70 @@
       if (!player || !target) return false;
 
       const bounds = CONFIG.arena.bounds;
-      const xPairs = [
-        [bounds.minX + 2.2, bounds.maxX - 2.2],
-        [bounds.minX + 3.5, bounds.maxX - 3.5],
-        [bounds.minX + 1.6, bounds.maxX - 1.6]
-      ];
-      const zCandidates = [0, -6, 6, -3, 3, -8, 8].filter((z) => z > bounds.minZ + 0.8 && z < bounds.maxZ - 0.8);
+      const weapon = getActiveWeaponConfig(player);
+      const originalPlayerPos = player.position.clone();
+      const originalTargetPos = target.position.clone();
+      const minDistance = Math.max(2.4, Math.min(4.4, weapon.range * 0.2));
+      const maxDistance = Math.min(Math.max(weapon.range - 0.6, 6.5), 12.2);
+      const gridPositions = [];
 
-      for (const z of zCandidates) {
-        for (const [leftX, rightX] of xPairs) {
-          const playerPos = new THREE.Vector3(leftX, 0, z);
-          const targetPos = new THREE.Vector3(rightX, 0, z);
-          if (isPointBlocked(playerPos) || isPointBlocked(targetPos)) continue;
+      for (let z = bounds.maxZ - 1.6; z >= bounds.minZ + 1.6; z -= 1.6) {
+        for (let x = bounds.maxX - 2.0; x >= bounds.minX + 2.0; x -= 1.6) {
+          const point = new THREE.Vector3(Number(x.toFixed(2)), 0, Number(z.toFixed(2)));
+          if (isPointBlocked(point)) continue;
+          gridPositions.push(point);
+        }
+      }
+
+      const targetPositions = gridPositions;
+      const playerPositions = gridPositions;
+
+      for (const targetPos of targetPositions) {
+        target.position.copy(targetPos);
+        stabilizeDebugEntity(target);
+
+        for (const playerPos of playerPositions) {
+          if (playerPos.distanceToSquared(targetPos) < 0.01) continue;
+          const dist = playerPos.distanceTo(targetPos);
+          if (dist < minDistance || dist > maxDistance) continue;
           if (!hasLineOfSight(playerPos, targetPos)) continue;
+          if (!canShotResolveTo(player, playerPos, targetPos, 'player', target)) continue;
 
           player.position.copy(playerPos);
           target.position.copy(targetPos);
           stabilizeDebugEntity(player);
           stabilizeDebugEntity(target);
-          if (canShotResolveTo(player, player.position, target.position, 'player', target)) {
-            updateAim(player, target.position.clone(), 1 / 60);
-            return true;
-          }
+          updateAim(player, target.position.clone(), 1 / 60);
+          return true;
         }
       }
 
+      player.position.copy(originalPlayerPos);
+      target.position.copy(originalTargetPos);
       return false;
     }
 
-    function firePlayerAtPoint(targetPoint) {
+    function firePlayerAtPoint(targetPoint, options = {}) {
       const player = getPlayer();
       if (!player || !targetPoint) return JSON.parse(renderGameToText());
+      const { resetFeedback = true, zeroSpread = false } = options;
       stabilizeDebugEntity(player);
-      resetDebugShotState();
+      if (resetFeedback) {
+        resetDebugShotState();
+      }
+      const weapon = getActiveWeaponConfig(player);
+      const originalSpread = weapon?.spreadPlayer ?? 0;
+      if (zeroSpread && weapon) {
+        weapon.spreadPlayer = 0;
+      }
       updateAim(player, targetPoint.clone(), 1 / 60);
-      attemptFire(player, getAimDirection(player, targetPoint), false);
+      try {
+        attemptFire(player, getAimDirection(player, targetPoint), false);
+      } finally {
+        if (zeroSpread && weapon) {
+          weapon.spreadPlayer = originalSpread;
+        }
+      }
       return JSON.parse(renderGameToText());
     }
 
@@ -5871,10 +5904,11 @@
       toTarget.normalize();
       const side = new THREE.Vector3(-toTarget.z, 0, toTarget.x);
       const offsets = [
-        CONFIG.player.hurtRadius + 0.45,
-        CONFIG.player.hurtRadius + 0.7,
-        CONFIG.player.hurtRadius + 0.95
+        CONFIG.player.hurtRadius + 0.08,
+        CONFIG.player.hurtRadius + 0.16,
+        CONFIG.player.hurtRadius + 0.24
       ];
+      const nearMissThreshold = CONFIG.player.hurtRadius + CONFIG.nearMissDrama.distance;
 
       for (const offset of offsets) {
         for (const sign of [1, -1]) {
@@ -5886,7 +5920,8 @@
           const origin = buildShotOrigin(attacker.position, dir);
           const end = origin.clone().addScaledVector(dir, getActiveWeaponConfig(attacker).range);
           const pellet = resolveShotPellet(attacker, origin, end);
-          if (pellet.hitType === null) return aimPoint;
+          const dist = distancePointToSegmentXZ(target.position, origin, pellet.shotEnd);
+          if (pellet.hitType === null && dist <= nearMissThreshold) return aimPoint;
         }
       }
 
@@ -5900,6 +5935,17 @@
         x: roundValue(entity.position.x),
         z: roundValue(entity.position.z),
         hp: roundValue(entity.hp, 1)
+      };
+    }
+
+    function annotatePhase21Snapshot(snapshot, action, ok, details = {}) {
+      return {
+        ...snapshot,
+        phase21Action: {
+          action,
+          ok,
+          ...details
+        }
       };
     }
 
@@ -5929,39 +5975,119 @@
           entity.respawnTimer = 0;
           return JSON.parse(renderGameToText());
         },
-        firePlayerAtTeam(team = 'p2') {
-          const target = getEntityByTeam(team);
-          if (!target) return JSON.parse(renderGameToText());
-          lineupDebugTeams(team);
-          return firePlayerAtPoint(target.position.clone());
+        setEntityPosition(team, x, z) {
+          const entity = getEntityByTeam(team);
+          if (!entity) return JSON.parse(renderGameToText());
+          entity.position.set(
+            THREE.MathUtils.clamp(x, CONFIG.arena.bounds.minX + 0.8, CONFIG.arena.bounds.maxX - 0.8),
+            0,
+            THREE.MathUtils.clamp(z, CONFIG.arena.bounds.minZ + 0.8, CONFIG.arena.bounds.maxZ - 0.8)
+          );
+          stabilizeDebugEntity(entity);
+          if (entity === getPlayer()) {
+            updateAim(entity, entity.position.clone().add(new THREE.Vector3(0, 0, 1)), 1 / 60);
+          }
+          return JSON.parse(renderGameToText());
         },
-        firePlayerAtBarrel(index = 0) {
+        firePlayerAtPoint(x, z, options = {}) {
+          const snapshot = firePlayerAtPoint(new THREE.Vector3(x, 0, z), { zeroSpread: true, ...options });
+          return annotatePhase21Snapshot(snapshot, 'firePlayerAtPoint', true, {
+            x: roundValue(x),
+            z: roundValue(z)
+          });
+        },
+        firePlayerAtTeam(team = 'p2', options = {}) {
+          const target = getEntityByTeam(team);
+          if (!target) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerAtTeam', false, {
+              reason: 'target_not_found',
+              targetTeam: team
+            });
+          }
+          if (!lineupDebugTeams(team)) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerAtTeam', false, {
+              reason: 'lineup_failed',
+              targetTeam: team
+            });
+          }
+          const snapshot = firePlayerAtPoint(target.position.clone(), { zeroSpread: true, ...options });
+          return annotatePhase21Snapshot(snapshot, 'firePlayerAtTeam', true, {
+            targetTeam: team
+          });
+        },
+        firePlayerAtBarrel(index = 0, options = {}) {
           const player = getPlayer();
           const barrels = world.barrels.filter((barrel) => barrel.alive);
           const barrel = barrels[index];
-          if (!player || !barrel) return JSON.parse(renderGameToText());
+          if (!player || !barrel) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerAtBarrel', false, {
+              reason: barrel ? 'player_not_found' : 'barrel_not_found',
+              targetIndex: index
+            });
+          }
           const firePos = findDebugFirePosition(player, barrel.position, 'barrel', barrel);
-          if (firePos) player.position.copy(firePos);
-          return firePlayerAtPoint(barrel.position.clone());
+          if (!firePos) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerAtBarrel', false, {
+              reason: 'fire_position_not_found',
+              targetIndex: index
+            });
+          }
+          player.position.copy(firePos);
+          const snapshot = firePlayerAtPoint(barrel.position.clone(), { zeroSpread: true, ...options });
+          return annotatePhase21Snapshot(snapshot, 'firePlayerAtBarrel', true, {
+            targetIndex: index
+          });
         },
-        firePlayerAtCover(index = 0) {
+        firePlayerAtCover(index = 0, options = {}) {
           const player = getPlayer();
           const covers = world.cover.filter((cover) => cover.active !== false);
           const cover = covers[index];
-          if (!player || !cover) return JSON.parse(renderGameToText());
+          if (!player || !cover) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerAtCover', false, {
+              reason: cover ? 'player_not_found' : 'cover_not_found',
+              targetIndex: index
+            });
+          }
           const center = getCoverCenter(cover);
           const firePos = findDebugFirePosition(player, center, 'cover', cover);
-          if (firePos) player.position.copy(firePos);
-          return firePlayerAtPoint(center);
+          if (!firePos) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerAtCover', false, {
+              reason: 'fire_position_not_found',
+              targetIndex: index
+            });
+          }
+          player.position.copy(firePos);
+          const snapshot = firePlayerAtPoint(center, { zeroSpread: true, ...options });
+          return annotatePhase21Snapshot(snapshot, 'firePlayerAtCover', true, {
+            targetIndex: index
+          });
         },
-        firePlayerNearMiss(team = 'p2') {
+        firePlayerNearMiss(team = 'p2', options = {}) {
           const player = getPlayer();
           const target = getEntityByTeam(team);
-          if (!player || !target) return JSON.parse(renderGameToText());
-          lineupDebugTeams(team);
+          if (!player || !target) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerNearMiss', false, {
+              reason: target ? 'player_not_found' : 'target_not_found',
+              targetTeam: team
+            });
+          }
+          if (!lineupDebugTeams(team)) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerNearMiss', false, {
+              reason: 'lineup_failed',
+              targetTeam: team
+            });
+          }
           const aimPoint = findNearMissAimPoint(player, target);
-          if (!aimPoint) return JSON.parse(renderGameToText());
-          return firePlayerAtPoint(aimPoint);
+          if (!aimPoint) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'firePlayerNearMiss', false, {
+              reason: 'aim_point_not_found',
+              targetTeam: team
+            });
+          }
+          const snapshot = firePlayerAtPoint(aimPoint, { zeroSpread: true, ...options });
+          return annotatePhase21Snapshot(snapshot, 'firePlayerNearMiss', true, {
+            targetTeam: team
+          });
         }
       };
     }
@@ -5985,6 +6111,7 @@
         shotConfirm: fx.shotConfirmTimer > 0
           ? { kind: fx.shotConfirmKind, label: fx.shotConfirmLabel }
           : null,
+        shotFeedbackEventCount: fx.shotFeedbackEventCount,
         lastShotFeedback: fx.lastShotFeedback ? { ...fx.lastShotFeedback } : null,
         lastNearMiss: Number.isFinite(fx.lastNearMissAt)
           ? {
