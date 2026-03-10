@@ -134,3 +134,16 @@ Original prompt: PLEASE IMPLEMENT THIS PLAN for the v1.0 beginner-friendly diffi
   - `critical-plus-swing-overlap` reported `peakFeedOpacity=0.9012`, `peakScreenshot='critical-plus-swing-peak.png'`, and `peakFrameOffsetMs=0`.
   - `runtimeErrors` remained empty in `output/visual-regression-round5/results.json`.
   - Ran develop-web-game client against http://127.0.0.1:4173/index.html and reviewed `output/visual-pass-client-round5/shot-0.png` + `state-0.json`; no `errors-0.json` was produced.
+
+- 2026-03-10 shot visual pass:
+- Replaced long full-path line tracers with pooled short streak primitives plus lighter travel hints; hitscan, damage, near-miss, barrel, and cover resolution order stayed unchanged.
+- Added `shotViewProfiles` and `impactVisualProfiles` in `src/visual-tuning.js`, plus per-weapon `shot_fired` fields for `streakLength`, `streakWidth`, `travelHintLength`, `travelHintOpacity`, `sampleEvery`, and `maxStreaksPerShot`.
+- Reworked `index.html` runtime shot visuals to use pooled meshes for streaks, impact flashes, and impact sparks instead of per-shot `BufferGeometry` / `LineBasicMaterial` allocation.
+- `presentCombatFeedback()` now routes `player / cover / barrel / near_miss` into distinct impact styles; `checkNearMiss()` no longer draws a full bullet line and instead emits a local near-miss hint + impact flash.
+- Extended `phase21TestApi` with `setViewMode()` and extended `render_game_to_text().visualState` with `shotFx` metrics plus top-level `viewMode`.
+- Browser automation initially exposed unhandled `WrongDocumentError` promise rejections from `requestPointerLock()` in automation; fixed by adding safe pointer-lock handling and using `skipPointerLock` in the test API seam.
+- Verification results:
+  - `node --test scripts/visual-system.contract.test.mjs` passed with the new shot-visual contract checks.
+  - `node scripts/visual-system.browser.test.mjs --url http://127.0.0.1:4173/index.html --out-dir output/visual-regression-shotfx` passed all 13 scenarios, including `topdown-pistol-shot-visual`, `fps-pistol-shot-visual`, `smg-density-shot-visual`, `barrel-impact-shot-visual`, and `near-miss-shot-visual`.
+  - `output/visual-regression-shotfx/results.json` confirms `fps` pistol streak length stayed short (`2.116`), topdown barrel shot stayed readable (`3.3`), and near-miss/barrel impact styles were classified correctly.
+  - Ran `develop-web-game` client against `http://127.0.0.1:4173/index.html`; `output/web-game-shotfx-live/state-0.json` captured the new `shotFx` metrics without client error files. The generic client screenshot still under-sampled the very short streak window, so deterministic `phase21TestApi` browser regression remains the authoritative visual check for this pass.

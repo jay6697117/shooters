@@ -292,52 +292,37 @@
       transform: translateX(-50%);
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
     }
 
     #controls {
-      padding: 8px 18px;
-      border-radius: 999px;
+      padding: 10px 20px;
+      border-radius: 10px;
       font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: clamp(11px, 1.3vw, 13px);
-      background: rgba(15, 18, 22, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      color: rgba(255, 255, 255, 0.95);
+      letter-spacing: 0.06em;
+      font-size: clamp(12px, 1.4vw, 15px);
+      background: rgba(0, 0, 0, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.7);
+      text-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.9),
+        0 0 8px rgba(0, 0, 0, 0.5);
+      line-height: 1.6;
     }
 
     #dash {
       font-family: var(--font-display);
-      font-size: clamp(14px, 1.5vw, 16px);
+      font-size: clamp(14px, 1.5vw, 18px);
       font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, rgba(77, 231, 255, 0.15), rgba(0, 0, 0, 0.65));
-      color: var(--near);
-      padding: 6px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(77, 231, 255, 0.3);
+      letter-spacing: 0.1em;
+      background: rgba(0, 0, 0, 0.82);
+      color: rgba(255, 255, 255, 0.85);
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       position: relative;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(77, 231, 255, 0.1);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    #dash::before {
-      content: "SPACE";
-      font-family: var(--font-body);
-      font-size: 10px;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: #fff;
-      letter-spacing: 0;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      white-space: nowrap;
     }
 
     #dash .cooldown {
@@ -346,7 +331,7 @@
       top: 0;
       bottom: 0;
       width: 0%;
-      background: rgba(77, 231, 255, 0.25);
+      background: rgba(77, 231, 255, 0.35);
       pointer-events: none;
     }
 
@@ -2008,22 +1993,37 @@
       setViewMode(state.viewMode === 'topdown' ? 'fps' : 'topdown');
     }
 
-    function setViewMode(mode) {
+    function requestPointerLockSafely() {
+      if (!canvas?.requestPointerLock) return;
+      try {
+        const result = canvas.requestPointerLock();
+        if (result && typeof result.catch === 'function') {
+          result.catch(() => {});
+        }
+      } catch (error) {
+        // Ignore pointer-lock failures outside user gestures or automation contexts.
+      }
+    }
+
+    function setViewMode(mode, options = {}) {
       if (state.viewMode === mode) return;
       state.viewMode = mode;
       const player = getPlayer();
       const crosshair = document.getElementById('fpsCrosshair');
+      const skipPointerLock = Boolean(options.skipPointerLock);
 
       if (mode === 'fps') {
         // 进入 FPS：尝试锁定鼠标、隐藏玩家模型、隐藏地面准星、显示十字准星
-        try { canvas.requestPointerLock(); } catch (e) { /* 非用户手势时忽略 */ }
+        if (!skipPointerLock) {
+          requestPointerLockSafely();
+        }
         if (player && player.root) player.root.visible = false;
         if (world.reticle) world.reticle.visible = false;
         if (crosshair) crosshair.style.display = 'block';
         state.fpsPitch = 0;
       } else {
         // 回到俯视：解锁鼠标、显示玩家模型、显示地面准星、隐藏十字准星
-        if (document.pointerLockElement === canvas) {
+        if (!skipPointerLock && document.pointerLockElement === canvas) {
           document.exitPointerLock();
         }
         if (player && player.root) player.root.visible = true;
@@ -2092,7 +2092,7 @@
         updatePointer(event);
         // FPS 模式下点击画布自动请求 Pointer Lock
         if (state.viewMode === 'fps' && document.pointerLockElement !== canvas && state.mode === 'playing') {
-          canvas.requestPointerLock();
+          requestPointerLockSafely();
         }
       });
 
@@ -4879,6 +4879,7 @@
         const didKill = applyDamage(pelletResult.hit, damage, attacker.team, attacker, weapon, origin, pelletResult.shotEnd);
         shotResult.didAnyHit = true;
         shotResult.didPlayerHit = true;
+        shotResult.impactKind = shotResult.impactKind || 'player';
         shotResult.targetTeam = shotResult.targetTeam || pelletResult.hit.team;
         shotResult.hitPosition = shotResult.hitPosition || pelletResult.shotEnd.clone();
         if (didKill) shotResult.didKill = true;
@@ -4892,6 +4893,7 @@
       if (pelletResult.hitType === 'barrel') {
         shotResult.didAnyHit = true;
         shotResult.didEnvironmentHit = true;
+        shotResult.impactKind = shotResult.impactKind || 'barrel';
         shotResult.hitPosition = shotResult.hitPosition || pelletResult.shotEnd.clone();
         applyBarrelDamage(pelletResult.hit, weapon.damage, attacker.team);
         return;
@@ -4900,6 +4902,7 @@
       if (pelletResult.hitType === 'cover') {
         shotResult.didAnyHit = true;
         shotResult.didEnvironmentHit = true;
+        shotResult.impactKind = shotResult.impactKind || 'cover';
         shotResult.hitPosition = shotResult.hitPosition || pelletResult.shotEnd.clone();
         applyCoverDamage(pelletResult.hit, weapon.damage, attacker.team);
         return;
@@ -4926,6 +4929,7 @@
       return {
         weaponId: shotResult.weaponId,
         outcome,
+        impactKind: shotResult.impactKind || (outcome === 'miss' ? null : 'player'),
         targetTeam: shotResult.targetTeam,
         hitPosition: shotResult.hitPosition ? shotResult.hitPosition.clone() : null,
         nearMissStart: shotResult.shotStart,
@@ -4952,6 +4956,7 @@
         attacker,
         weaponId: shotResult.weaponId,
         targetTeam: shotResult.targetTeam,
+        impactKind: shotResult.impactKind,
         impactPosition
       });
     }
@@ -5609,6 +5614,49 @@
       return dir;
     }
 
+    function emitShotTrailVisual(origin, shotEnd, shotVisual, shotView) {
+      if (!shotVisual || !shotView) return;
+      const direction = shotEnd.clone().sub(origin);
+      const hitDistance = direction.length();
+      if (hitDistance <= 0.08) return;
+      direction.normalize();
+
+      const streakLength = Math.min(hitDistance, shotVisual.streakLength * (shotView.lengthMul || 1));
+      const streakEnd = origin.clone().addScaledVector(direction, streakLength);
+      spawnTracer(origin, streakEnd, shotVisual.tracerColor ?? COLORS.tracer, shotVisual.tracerLife ?? 0.06, {
+        additive: true,
+        opacity: (shotVisual.tracerOpacity ?? 0.8) * (shotView.opacityMul || 1),
+        width: (shotVisual.streakWidth ?? 0.05) * (shotView.widthMul || 1),
+        fadeMul: shotView.fadeMul || 1,
+        kind: 'streak'
+      });
+
+      let travelHint = 0;
+      const maxHintLength = Math.max(0, hitDistance - streakLength * 0.45);
+      const travelHintLength = Math.min(
+        maxHintLength,
+        (shotVisual.travelHintLength ?? 0) * (shotView.travelHintMul || 1)
+      );
+      if (travelHintLength > 0.16) {
+        const hintStart = origin.clone().lerp(shotEnd, Math.min(0.72, Math.max(0.5, streakLength / hitDistance + 0.08)));
+        const hintEnd = hintStart.clone().addScaledVector(direction, travelHintLength);
+        spawnTracer(hintStart, hintEnd, shotVisual.tracerColor ?? COLORS.tracer, (shotVisual.tracerLife ?? 0.06) * 0.82, {
+          additive: true,
+          opacity: (shotVisual.travelHintOpacity ?? 0.1) * (shotView.opacityMul || 1),
+          width: (shotVisual.streakWidth ?? 0.05) * (shotView.widthMul || 1) * 0.58,
+          fadeMul: (shotView.fadeMul || 1) * 0.92,
+          kind: 'travel_hint'
+        });
+        travelHint = 1;
+      }
+
+      updateLastShotVisual({
+        viewMode: state.viewMode,
+        streakLength: Number(streakLength.toFixed(3)),
+        travelHint
+      });
+    }
+
     function attemptFire(attacker, dir, isAI) {
       if (!attacker || attacker.isDead) return;
       if (attacker.weapon.switchTimer > 0) return;
@@ -5622,6 +5670,7 @@
       const forwardBase = dir.clone().normalize();
       const origin = getShotOrigin(attacker, forwardBase);
       const shotVisual = isAI ? null : getWeaponFeedbackProfile(attacker.weapon.id)?.shot_fired;
+      const shotView = isAI ? null : getActiveShotViewProfile();
 
       const pellets = weapon.pellets || 1;
       const shotResult = {
@@ -5633,11 +5682,13 @@
         didKill: false,
         targetTeam: null,
         hitPosition: null,
+        impactKind: null,
         closestMissDist: Infinity,
         closestMissEnd: null,
         closestMissTarget: null
       };
       const knockState = { applied: false };
+      const visualEmission = isAI ? null : beginShotVisualEmission(attacker.weapon.id, shotVisual, pellets);
 
       for (let i = 0; i < pellets; i++) {
         const spreadBase = isAI ? weapon.spreadAI : weapon.spreadPlayer;
@@ -5655,20 +5706,8 @@
         const pelletResult = resolveShotPellet(attacker, origin, end);
         const shotEnd = pelletResult.shotEnd;
 
-        const isShotgun = pellets > 1;
-        const drawTracer = isShotgun || pellets === 1 || i < 3;
-        if (drawTracer) {
-          if (isShotgun) {
-            spawnTracer(origin, shotEnd, shotVisual?.tracerColor ?? 0xfff1cc, shotVisual?.tracerLife ?? 0.09, {
-              additive: true,
-              opacity: shotVisual?.tracerOpacity ?? 0.92
-            });
-          } else {
-            spawnTracer(origin, shotEnd, shotVisual?.tracerColor ?? weapon.tracer, shotVisual?.tracerLife ?? 0.06, {
-              additive: true,
-              opacity: shotVisual?.tracerOpacity ?? 0.8
-            });
-          }
+        if (!isAI && shotVisual && shouldEmitShotTrailForPellet(visualEmission, i, pellets)) {
+          emitShotTrailVisual(origin, shotEnd, shotVisual, shotView);
         }
 
         commitShotPellet(attacker, weapon, isAI, aiTuning, origin, pelletResult, shotResult, knockState);
@@ -6459,9 +6498,6 @@
         target.dashCooldown = 0;
         target.nearMissCooldown = CONFIG.nearMissDrama.cooldown;
 
-        // Extra trail to highlight the near-miss bullet.
-        spawnTracer(start, end, COLORS.near, CONFIG.nearMissDrama.duration);
-
         const popupPos = target.position.clone();
         popupPos.y = 1.9;
         spawnPopup('擦弹躲闪！', popupPos, 'close', 0.6);
@@ -6912,33 +6948,63 @@
     }
 
     function spawnTracer(start, end, color = COLORS.tracer, life = 0.05, options = null) {
-      const geometry = new THREE.BufferGeometry().setFromPoints([start, end]);
+      ensureShotVisualPools();
+      const segment = end.clone().sub(start);
+      const length = segment.length();
+      if (length <= 0.05) return null;
+      const streak = acquirePooledFx(world.fxLines);
+      if (!streak) return null;
       const opacity = options?.opacity ?? 1;
-      const additive = options?.additive ?? false;
-      const material = new THREE.LineBasicMaterial({
-        color,
-        transparent: opacity < 1 || additive,
-        opacity,
-        blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
-        depthWrite: false
-      });
-      const line = new THREE.Line(geometry, material);
-      line.userData.life = life;
-      line.renderOrder = additive ? 10 : 0;
-      world.scene.add(line);
-      world.fxLines.push(line);
+      streak.visible = true;
+      streak.position.copy(start).lerp(end, 0.5);
+      streak.quaternion.setFromUnitVectors(SHOT_FX_AXIS, segment.normalize());
+      streak.scale.set(options?.width ?? 0.05, length, options?.width ?? 0.05);
+      streak.material.color.setHex(color);
+      streak.material.opacity = opacity;
+      streak.material.blending = options?.additive === false ? THREE.NormalBlending : THREE.AdditiveBlending;
+      streak.userData.fxKind = options?.kind || 'streak';
+      streak.userData.life = life;
+      streak.userData.maxLife = life;
+      streak.userData.baseOpacity = opacity;
+      streak.userData.fadeMul = options?.fadeMul ?? 1;
+      return streak;
     }
 
     function updateTracers(dt) {
-      world.fxLines = world.fxLines.filter((line) => {
+      world.fxLines.forEach((line) => {
+        if (!line.visible) return;
         line.userData.life -= dt;
         if (line.userData.life <= 0) {
-          world.scene.remove(line);
-          line.geometry.dispose();
-          line.material.dispose();
-          return false;
+          hidePooledFx(line);
+          return;
         }
-        return true;
+        const fade = THREE.MathUtils.clamp(line.userData.life / Math.max(0.0001, line.userData.maxLife), 0, 1);
+        line.material.opacity = line.userData.baseOpacity * Math.pow(fade, line.userData.fadeMul || 1);
+      });
+
+      world.fxImpactFlashes.forEach((flash) => {
+        if (!flash.visible) return;
+        flash.userData.life -= dt;
+        if (flash.userData.life <= 0) {
+          hidePooledFx(flash);
+          return;
+        }
+        const fade = THREE.MathUtils.clamp(flash.userData.life / Math.max(0.0001, flash.userData.maxLife), 0, 1);
+        flash.material.opacity = flash.userData.baseOpacity * fade;
+        flash.scale.multiplyScalar(1 + dt * 3.4);
+      });
+
+      world.fxImpactSparks.forEach((spark) => {
+        if (!spark.visible) return;
+        spark.userData.life -= dt;
+        if (spark.userData.life <= 0) {
+          hidePooledFx(spark);
+          return;
+        }
+        spark.userData.velocity.y += -14 * dt;
+        spark.position.addScaledVector(spark.userData.velocity, dt);
+        const fade = THREE.MathUtils.clamp(spark.userData.life / Math.max(0.0001, spark.userData.maxLife), 0, 1);
+        spark.material.opacity = spark.userData.baseOpacity * fade;
       });
     }
 
@@ -7820,6 +7886,10 @@
           forcePlayerWeapon(weaponId);
           return JSON.parse(renderGameToText());
         },
+        setViewMode(mode = 'topdown') {
+          setViewMode(mode === 'fps' ? 'fps' : 'topdown', { skipPointerLock: true });
+          return JSON.parse(renderGameToText());
+        },
         setEntityHp(team, hp) {
           const entity = getEntityByTeam(team);
           if (!entity) return JSON.parse(renderGameToText());
@@ -8014,6 +8084,21 @@
         vignette: Boolean(layerSeverities.vignette),
         camera: Boolean(layerSeverities.camera)
       };
+      const shotFx = {
+        activeStreaks: countVisibleFx(world.fxLines, 'streak'),
+        activeTravelHints: countVisibleFx(world.fxLines, 'travel_hint'),
+        activeImpactFlashes: countVisibleFx(world.fxImpactFlashes, 'impact_flash'),
+        activeImpactSparks: countVisibleFx(world.fxImpactSparks, 'impact_spark'),
+        lastViewMode: fx.lastShotVisual?.viewMode || null,
+        lastWeaponId: fx.lastShotVisual?.weaponId || null,
+        lastStreakLength: roundValue(fx.lastShotVisual?.streakLength || 0, 3),
+        lastTravelHint: fx.lastShotVisual?.travelHint || 0,
+        lastImpactKind: fx.lastShotVisual?.impactKind || null,
+        lastImpactStyle: fx.lastShotVisual?.impactStyle || null,
+        sampleEvery: fx.lastShotVisual?.sampleEvery || 1,
+        sampleAccepted: fx.shotVisualSampleAccepted,
+        sampleSkipped: fx.shotVisualSampleSkipped
+      };
       const bannerVisible = bannerEl.classList.contains('show') && bannerEl.dataset.suppressed !== 'true';
       const visualState = {
         density: getHudVisualProfile().density,
@@ -8035,15 +8120,17 @@
           label: fx.combatFeedLabel,
           meta: fx.combatFeedMeta
         } : null,
+        shotFx: shotFx,
         screenPulseKind: fx.combatPulseTimer > 0 ? fx.combatPulseKind : null,
         screenPulseSeverity: fx.combatPulseTimer > 0 && fx.combatPulseSeverity !== 'calm' ? fx.combatPulseSeverity : null,
-        activeFxCount: world.fxParticles.length + world.fxSprites.length + world.fxLines.length,
+        activeFxCount: world.fxParticles.length + world.fxSprites.length + shotFx.activeStreaks + shotFx.activeTravelHints + shotFx.activeImpactFlashes + shotFx.activeImpactSparks,
         recentEvents: fx.visualEventLog.map((entry) => ({ ...entry })),
         supportedEvents: visualEventTypes.slice()
       };
       const payload = {
         mode: state.mode,
         gameMode: state.gameMode,
+        viewMode: state.viewMode,
         difficulty: getDifficultyForMode(state.gameMode),
         visualState: visualState,
         shotConfirm: fx.shotConfirmTimer > 0

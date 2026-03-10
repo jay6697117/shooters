@@ -1,0 +1,182 @@
+{
+  "mode": "playing",
+  "gameMode": "duel",
+  "viewMode": "topdown",
+  "difficulty": "novice",
+  "visualState": {
+    "density": "focus",
+    "danger": "calm",
+    "severity": "calm",
+    "foregroundSeverity": null,
+    "backgroundSeverity": null,
+    "bannerVisible": false,
+    "persistentDanger": false,
+    "lastDangerSource": null,
+    "layerSeverities": {
+      "badge": null,
+      "feed": null,
+      "pulse": null,
+      "vignette": null,
+      "camera": null
+    },
+    "activeLayers": {
+      "badge": false,
+      "feed": false,
+      "pulse": false,
+      "vignette": false,
+      "camera": false
+    },
+    "lowHpActive": false,
+    "shotConfirmKind": "player_hit",
+    "combatFeed": {
+      "kind": "player_hit",
+      "severity": null,
+      "emphasis": "standard",
+      "label": "命中确认",
+      "meta": "HIT"
+    },
+    "shotFx": {
+      "activeStreaks": 1,
+      "activeTravelHints": 1,
+      "activeImpactFlashes": 1,
+      "activeImpactSparks": 8,
+      "lastViewMode": "topdown",
+      "lastWeaponId": "pistol",
+      "lastStreakLength": 3.288,
+      "lastTravelHint": 1,
+      "lastImpactKind": "player",
+      "lastImpactStyle": "player",
+      "sampleEvery": 1,
+      "sampleAccepted": 1,
+      "sampleSkipped": 0
+    },
+    "screenPulseKind": "player_hit",
+    "screenPulseSeverity": null,
+    "activeFxCount": 16,
+    "recentEvents": [
+      {
+        "type": "shot_fired",
+        "weaponId": "pistol",
+        "label": "手枪点射",
+        "severity": null,
+        "danger": null,
+        "source": null,
+        "at": 0.2
+      },
+      {
+        "type": "player_hit",
+        "weaponId": "pistol",
+        "label": "HIT",
+        "severity": null,
+        "danger": null,
+        "source": "player_hit",
+        "at": 0.2
+      }
+    ],
+    "supportedEvents": [
+      "shot_fired",
+      "player_hit",
+      "kill",
+      "environment_hit",
+      "near_miss",
+      "damage_taken",
+      "low_hp",
+      "round_transition"
+    ]
+  },
+  "shotConfirm": {
+    "kind": "player_hit",
+    "label": "HIT"
+  },
+  "shotFeedbackEventCount": 1,
+  "lastShotFeedback": {
+    "outcome": "player_hit",
+    "weaponId": "pistol",
+    "label": "HIT",
+    "at": 0.2
+  },
+  "lastNearMiss": null,
+  "player": {
+    "x": 9.4,
+    "z": 4.2,
+    "hp": 100,
+    "weapon": "pistol",
+    "ammo": 7
+  },
+  "entities": [
+    {
+      "id": "p1",
+      "team": "p1",
+      "x": 9.4,
+      "z": 4.2,
+      "hp": 100
+    },
+    {
+      "id": "p2",
+      "team": "p2",
+      "x": 6.2,
+      "z": 7.4,
+      "hp": 49
+    }
+  ],
+  "barrels": [
+    {
+      "index": 0,
+      "x": -8.2,
+      "z": -6.5
+    },
+    {
+      "index": 1,
+      "x": 8.2,
+      "z": 6.5
+    },
+    {
+      "index": 2,
+      "x": 0,
+      "z": 7
+    }
+  ],
+  "cover": [
+    {
+      "index": 0,
+      "x": 0,
+      "z": -0.6,
+      "destructible": false
+    },
+    {
+      "index": 1,
+      "x": -11.2,
+      "z": -4.2,
+      "destructible": false
+    },
+    {
+      "index": 2,
+      "x": -11.2,
+      "z": 4.2,
+      "destructible": false
+    },
+    {
+      "index": 3,
+      "x": 11.2,
+      "z": -4.2,
+      "destructible": false
+    },
+    {
+      "index": 4,
+      "x": 11.2,
+      "z": 4.2,
+      "destructible": false
+    },
+    {
+      "index": 5,
+      "x": -7.4,
+      "z": 0.8,
+      "destructible": false
+    }
+  ],
+  "phase21Action": {
+    "action": "firePlayerAtTeam",
+    "ok": true,
+    "targetTeam": "p2"
+  }
+}

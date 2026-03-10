@@ -1,0 +1,18 @@
+[
+  {
+    "type": "pageerror",
+    "text": "WrongDocumentError: The root document of this element is not valid for pointer lock."
+  },
+  {
+    "type": "pageerror",
+    "text": "WrongDocumentError: The root document of this element is not valid for pointer lock."
+  },
+  {
+    "type": "pageerror",
+    "text": "WrongDocumentError: The root document of this element is not valid for pointer lock."
+  },
+  {
+    "type": "pageerror",
+    "text": "WrongDocumentError: The root document of this element is not valid for pointer lock."
+  }
+]
