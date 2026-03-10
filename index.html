@@ -507,11 +507,16 @@
       border: 2px solid rgba(255, 255, 255, 0.2);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
     #banner.show {
       opacity: 1;
+    }
+
+    #banner[data-suppressed="true"] {
+      opacity: 0;
+      transform: translate(-50%, calc(-50% - 18px)) scale(0.96);
     }
 
     #nearMissFlash,
@@ -755,6 +760,506 @@
 	      border: 1px solid rgba(255, 255, 255, 0.12);
 	      font-weight: 700;
 	    }
+
+    /* Visual pass overrides */
+    #canvasWrap {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    #hud {
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 38%),
+        linear-gradient(180deg, rgba(6, 8, 12, 0.06), transparent 28%, transparent 74%, rgba(6, 8, 12, 0.18));
+    }
+
+    .panel,
+    .playerPanel {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+        rgba(11, 14, 20, 0.46);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow:
+        0 16px 28px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .playerPanel {
+      gap: 8px;
+      min-width: 188px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      transform-origin: center;
+      transition: opacity 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .playerPanel.compact {
+      min-width: 172px;
+      padding: 10px 12px;
+    }
+
+    .playerPanel.down {
+      opacity: 0.4;
+      transform: scale(0.97);
+    }
+
+    .playerPanel.is-player {
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow:
+        0 18px 32px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .nameTag {
+      padding: 5px 12px 4px;
+      border-radius: 999px;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    .hpWrap {
+      gap: 10px;
+    }
+
+    .hpLabel,
+    .livesInfo {
+      font-size: 10px;
+      opacity: 0.68;
+    }
+
+    .hpBar {
+      min-width: 126px;
+      gap: 4px;
+    }
+
+    .hpSeg {
+      height: 9px;
+      border-radius: 999px;
+    }
+
+    .weaponInfo {
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(4, 7, 12, 0.42);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .weaponIcon {
+      width: 28px;
+      height: 28px;
+      font-size: 17px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .weaponName {
+      min-width: 44px;
+    }
+
+    #timerPanel {
+      top: 12px;
+      gap: 8px;
+      z-index: 3;
+    }
+
+    #timer {
+      padding: 10px 24px 8px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+        rgba(13, 17, 24, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow:
+        0 16px 28px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      text-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+    }
+
+    #matchMeta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hudChip {
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(11, 14, 20, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+      transition: color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    .hudChip.calm { color: #d5e8ff; }
+    .hudChip.pressure { color: #ffc6a1; border-color: rgba(255, 138, 61, 0.42); }
+    .hudChip.warning { color: #bdf9ff; border-color: rgba(77, 231, 255, 0.42); }
+    .hudChip.critical { color: #ffd8d8; border-color: rgba(255, 84, 84, 0.46); }
+    .hudChip.swing { color: #ffe7a1; border-color: rgba(255, 196, 77, 0.42); }
+
+    #roundPips {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(8, 11, 16, 0.36);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    #bottomBar {
+      bottom: 12px;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    #controls {
+      max-width: min(48vw, 680px);
+      padding: 10px 16px;
+      background: rgba(6, 8, 12, 0.44);
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: 0.08em;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    #dash {
+      padding: 10px 14px 8px;
+      border-radius: 18px;
+      background: rgba(10, 13, 18, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      min-width: 56px;
+      min-height: 64px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      box-shadow: 0 14px 22px rgba(0, 0, 0, 0.22);
+    }
+
+    #dash .cooldown {
+      background: linear-gradient(180deg, rgba(77, 231, 255, 0.04), rgba(77, 231, 255, 0.22));
+    }
+
+    #hud[data-mode="playing"] #controls {
+      opacity: 0.12;
+      transform: translateY(4px);
+    }
+
+    #hud[data-mode="menu"] #controls,
+    #hud[data-mode="paused"] #controls,
+    #hud[data-mode="roundIntro"] #controls {
+      opacity: 0.78;
+      transform: none;
+    }
+
+    #hud[data-visual-density="compact"] #controls {
+      opacity: 0.08;
+    }
+
+    #menuOverlay {
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 32%),
+        linear-gradient(180deg, rgba(5, 8, 12, 0.32), rgba(5, 8, 12, 0.52));
+    }
+
+    .menuSurface {
+      width: min(620px, 82vw);
+      padding: 22px 26px 24px;
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+        rgba(7, 10, 15, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 28px 54px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .menuEyebrowRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .menuEyebrow,
+    .menuChip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .menuEyebrow {
+      color: #fff0c4;
+    }
+
+    .menuChip {
+      color: #bfefff;
+    }
+
+    .menuStats {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0 16px;
+    }
+
+    .menuStat {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(6, 9, 14, 0.44);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: left;
+    }
+
+    .menuStat span {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.62;
+      margin-bottom: 6px;
+    }
+
+    .menuStat strong {
+      display: block;
+      font-size: clamp(12px, 1.6vw, 15px);
+      font-weight: 800;
+      color: #f6f8ff;
+    }
+
+    .menuStartLine {
+      margin-top: 6px;
+    }
+
+    .modeBtn,
+    .difficultyBtn {
+      min-width: 92px;
+      padding: 10px 16px;
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+        rgba(11, 14, 20, 0.62);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.16);
+    }
+
+    .modeBtn.active,
+    .difficultyBtn.active {
+      transform: translateY(-1px);
+      box-shadow:
+        0 16px 24px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    }
+
+    #screenPulse {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 56%);
+      mix-blend-mode: screen;
+      transition: opacity 0.08s linear;
+    }
+
+    #screenPulse[data-kind="player_hit"] {
+      background: radial-gradient(circle at center, rgba(255, 214, 74, 0.26), rgba(255, 214, 74, 0) 56%);
+    }
+
+    #screenPulse[data-kind="kill"] {
+      background: radial-gradient(circle at center, rgba(255, 138, 61, 0.34), rgba(255, 138, 61, 0) 58%);
+    }
+
+    #screenPulse[data-kind="shot_fired"] {
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 48%);
+    }
+
+    #screenPulse[data-kind="near_miss"] {
+      background: radial-gradient(circle at center, rgba(77, 231, 255, 0.24), rgba(77, 231, 255, 0) 58%);
+    }
+
+    #screenPulse[data-kind="damage_taken"] {
+      background: radial-gradient(circle at center, rgba(255, 84, 84, 0.22), rgba(255, 84, 84, 0) 58%);
+    }
+
+    #screenPulse[data-kind="low_hp"] {
+      background: radial-gradient(circle at center, rgba(255, 84, 84, 0.14), rgba(255, 84, 84, 0) 62%);
+    }
+
+    #screenPulse[data-kind="round_transition"] {
+      background: radial-gradient(circle at center, rgba(255, 196, 77, 0.24), rgba(255, 196, 77, 0) 60%);
+    }
+
+    #combatFeed {
+      position: absolute;
+      left: 50%;
+      bottom: 92px;
+      min-width: 220px;
+      padding: 10px 14px;
+      border-radius: 18px;
+      background: rgba(7, 10, 15, 0.52);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transform: translateX(-50%) translateY(8px);
+      opacity: 0;
+      pointer-events: none;
+      text-align: center;
+      box-shadow: 0 16px 26px rgba(0, 0, 0, 0.16);
+      z-index: 3;
+    }
+
+    #combatFeed[data-emphasis="hero"] {
+      bottom: 132px;
+      min-width: 320px;
+      padding: 14px 18px 12px;
+      border-radius: 22px;
+      border-width: 2px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow:
+        0 22px 34px rgba(0, 0, 0, 0.24),
+        0 0 40px rgba(255, 196, 77, 0.22);
+    }
+
+    #combatFeedLabel {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 2vw, 24px);
+      letter-spacing: 0.12em;
+      line-height: 1;
+      color: #fff0c4;
+    }
+
+    #combatFeedMeta {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    #combatFeed[data-emphasis="hero"] #combatFeedLabel {
+      font-size: clamp(24px, 2.8vw, 34px);
+      letter-spacing: 0.14em;
+      text-shadow: 0 3px 14px rgba(255, 196, 77, 0.2);
+    }
+
+    #combatFeed[data-emphasis="hero"] #combatFeedMeta {
+      margin-top: 6px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+    }
+
+    #combatFeed[data-kind="damage_taken"] #combatFeedLabel,
+    #combatFeed[data-kind="low_hp"] #combatFeedLabel {
+      color: #ffd0d0;
+    }
+
+    #combatFeed[data-kind="near_miss"] #combatFeedLabel {
+      color: #c4fbff;
+    }
+
+    #combatFeed[data-kind="round_transition"] #combatFeedLabel,
+    #combatFeed[data-kind="kill"] #combatFeedLabel {
+      color: #ffe3a6;
+    }
+
+    #combatFeed[data-severity="pressure"] #combatFeedLabel { color: #ffe0c0; }
+    #combatFeed[data-severity="warning"] #combatFeedLabel { color: #ccfbff; }
+    #combatFeed[data-severity="critical"] #combatFeedLabel { color: #ffe0e0; }
+    #combatFeed[data-severity="swing"] #combatFeedLabel { color: #ffe8ae; }
+
+    #combatFeed[data-severity="pressure"] #combatFeedMeta { color: #ffd4bb; }
+    #combatFeed[data-severity="warning"] #combatFeedMeta { color: #c8f7ff; }
+    #combatFeed[data-severity="critical"] #combatFeedMeta { color: #ffd1d1; }
+    #combatFeed[data-severity="swing"] #combatFeedMeta { color: #ffe0aa; }
+
+    #shotConfirm {
+      min-width: 110px;
+      padding: 8px 12px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.01)),
+        rgba(8, 10, 14, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow: 0 18px 28px rgba(0, 0, 0, 0.14);
+    }
+
+    #shotConfirmText {
+      font-size: clamp(10px, 1.05vw, 12px);
+    }
+
+    #hud[data-danger="pressure"] #timer {
+      color: #fff0e2;
+      border-color: rgba(255, 138, 61, 0.36);
+    }
+
+    #hud[data-danger="warning"] #timer {
+      color: #e6fdff;
+      border-color: rgba(77, 231, 255, 0.34);
+    }
+
+    #hud[data-danger="critical"] #timer {
+      color: #ffe7e7;
+      border-color: rgba(255, 84, 84, 0.46);
+    }
+
+    #hud[data-danger="swing"] #timer {
+      color: #fff2cf;
+      border-color: rgba(255, 196, 77, 0.34);
+    }
+
+    #hud[data-danger="critical"] #dangerBadge {
+      box-shadow: 0 0 26px rgba(255, 84, 84, 0.18);
+    }
+
+    #hud[data-visual-density="compact"] .playerPanel {
+      padding: 10px 12px;
+      border-radius: 16px;
+    }
+
+    #hud[data-visual-density="compact"] .weaponInfo {
+      padding: 7px 9px;
+    }
+
+    #hud[data-visual-density="compact"] #combatFeed {
+      bottom: 86px;
+      min-width: 200px;
+    }
+
+    #hud[data-visual-density="compact"] #combatFeed[data-emphasis="hero"] {
+      bottom: 116px;
+      min-width: 264px;
+      padding: 12px 16px 10px;
+    }
+
+    @media (max-width: 900px) {
+      .menuSurface {
+        width: min(680px, 92vw);
+        padding: 18px;
+      }
+
+      .menuStats {
+        grid-template-columns: 1fr;
+      }
+
+      #controls {
+        max-width: 70vw;
+      }
+
+      #combatFeed {
+        min-width: 190px;
+      }
+    }
 	  </style>
 	</head>
 	<body>
@@ -769,6 +1274,10 @@
 
         <div id="timerPanel">
           <div id="timer">时间: 01:45</div>
+          <div id="matchMeta">
+            <span class="hudChip" id="modeBadge">1v1 对决</span>
+            <span class="hudChip calm" id="dangerBadge">战场稳定</span>
+          </div>
           <div id="roundPips">
             <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
           </div>
@@ -783,24 +1292,44 @@
         <div id="suddenDeath">殊死一搏</div>
 
 	        <div id="menuOverlay" class="overlay visible">
-	          <h1>卡通大乱斗</h1>
-	          <div class="subtitle" id="modeSubtitle">快节奏的微型竞技场 1v1 对决。</div>
-	          <div class="modeSelect">
-	            <button class="modeBtn" data-mode="duel">1v1 对决</button>
-	            <button class="modeBtn" data-mode="deathmatch">4人 乱斗</button>
-	          </div>
-	          <div class="rules" id="modeRules">五局三胜 · 1:45 时间限制 · 爆炸桶无差别伤害</div>
-	          <div class="difficultySelect" id="difficultySelect">
-	            <div class="difficultyLabel" id="difficultyLabel">AI 难度</div>
-	            <div class="difficultyButtons">
-	              <button class="difficultyBtn" data-diff="novice" type="button">新手</button>
-	              <button class="difficultyBtn" data-diff="easy" type="button">简单</button>
-	              <button class="difficultyBtn" data-diff="normal" type="button">普通</button>
-	              <button class="difficultyBtn" data-diff="hard" type="button">困难</button>
+            <div class="menuSurface">
+	            <div class="menuEyebrowRow">
+                <div class="menuEyebrow" id="menuEyebrow">Arena Ready</div>
+                <div class="menuChip" id="menuChip">DUEL BENCHMARK</div>
+              </div>
+	            <h1>卡通大乱斗</h1>
+	            <div class="subtitle" id="modeSubtitle">快节奏的微型竞技场 1v1 对决。</div>
+              <div class="menuStats">
+                <div class="menuStat">
+                  <span>模式</span>
+                  <strong id="menuModeStat">1v1 对决</strong>
+                </div>
+                <div class="menuStat">
+                  <span>AI</span>
+                  <strong id="menuDifficultyStat">新手</strong>
+                </div>
+                <div class="menuStat">
+                  <span>节奏</span>
+                  <strong id="menuTempoStat">Crisp 1v1 gunfeel</strong>
+                </div>
+              </div>
+	            <div class="modeSelect">
+	              <button class="modeBtn" data-mode="duel">1v1 对决</button>
+	              <button class="modeBtn" data-mode="deathmatch">4人 乱斗</button>
 	            </div>
-	          </div>
-	          <div class="statLine">按 <strong>Enter回车键</strong> 开始</div>
-	          <div id="bestTime">最快获胜时间: --</div>
+	            <div class="rules" id="modeRules">五局三胜 · 1:45 时间限制 · 爆炸桶无差别伤害</div>
+	            <div class="difficultySelect" id="difficultySelect">
+	              <div class="difficultyLabel" id="difficultyLabel">AI 难度</div>
+	              <div class="difficultyButtons">
+	                <button class="difficultyBtn" data-diff="novice" type="button">新手</button>
+	                <button class="difficultyBtn" data-diff="easy" type="button">简单</button>
+	                <button class="difficultyBtn" data-diff="normal" type="button">普通</button>
+	                <button class="difficultyBtn" data-diff="hard" type="button">困难</button>
+	              </div>
+	            </div>
+	            <div class="statLine menuStartLine">按 <strong>Enter回车键</strong> 开始</div>
+	            <div id="bestTime">最快获胜时间: --</div>
+            </div>
 	        </div>
 
         <div id="pauseOverlay" class="overlay">
@@ -826,6 +1355,11 @@
         <div id="vignette"></div>
         <div id="lowHpVignette"></div>
         <div id="dramaticOverlay"></div>
+        <div id="screenPulse" data-kind="idle" data-severity="calm"></div>
+        <div id="combatFeed" data-kind="idle" data-severity="calm">
+          <div id="combatFeedLabel">战场稳定</div>
+          <div id="combatFeedMeta">先观察，再压枪。</div>
+        </div>
         <div id="shotConfirm" data-kind="idle">
           <div id="shotConfirmGlyph"></div>
           <div id="shotConfirmText"></div>
@@ -849,6 +1383,17 @@
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+    import {
+      dangerLayerPriority,
+      dangerSeverityOrder,
+      getDangerSeverityConfig,
+      getGlobalVisualProfile,
+      getWeaponVisualProfile,
+      getVisualModeKey,
+      resolveEventSeverity,
+      visualEventTypes,
+      visualTuning
+    } from './src/visual-tuning.js';
 
     const BASE_ARENA = {
       width: 26,
@@ -1065,43 +1610,6 @@
       near: 0x4DE7FF
     };
 
-    const weaponFeedbackTuning = {
-      duel: {
-        pistol: {
-          player_hit: { duration: 0.14, opacity: 0.96, pulse: 0.58, hitstop: 0.03, flash: 0.04, shakeTime: 0.05, shakeIntensity: 0.035, throttle: 0.06, glyph: '✦', label: 'HIT' },
-          kill: { duration: 0.22, opacity: 1.0, pulse: 1.0, hitstop: 0.075, flash: 0.075, shakeTime: 0.14, shakeIntensity: 0.10, throttle: 0, glyph: '✹', label: 'K.O.' },
-          environment_hit: { duration: 0.10, opacity: 0.75, pulse: 0.18, hitstop: 0.012, flash: 0.015, shakeTime: 0.02, shakeIntensity: 0.015, throttle: 0.08, glyph: '◌', label: 'CLANG' }
-        },
-        smg: {
-          player_hit: { duration: 0.10, opacity: 0.78, pulse: 0.32, hitstop: 0.014, flash: 0.02, shakeTime: 0.025, shakeIntensity: 0.018, throttle: 0.09, glyph: '•', label: 'HIT' },
-          kill: { duration: 0.18, opacity: 0.96, pulse: 0.82, hitstop: 0.05, flash: 0.05, shakeTime: 0.08, shakeIntensity: 0.055, throttle: 0, glyph: '✦', label: 'K.O.' },
-          environment_hit: { duration: 0.08, opacity: 0.62, pulse: 0.10, hitstop: 0.008, flash: 0.010, shakeTime: 0.015, shakeIntensity: 0.010, throttle: 0.12, glyph: '·', label: 'CLANG' }
-        },
-        shotgun: {
-          player_hit: { duration: 0.18, opacity: 1.0, pulse: 0.88, hitstop: 0.045, flash: 0.05, shakeTime: 0.09, shakeIntensity: 0.065, throttle: 0.08, glyph: '✶', label: 'HIT' },
-          kill: { duration: 0.26, opacity: 1.0, pulse: 1.18, hitstop: 0.09, flash: 0.085, shakeTime: 0.17, shakeIntensity: 0.13, throttle: 0, glyph: '✹', label: 'K.O.' },
-          environment_hit: { duration: 0.12, opacity: 0.82, pulse: 0.22, hitstop: 0.018, flash: 0.018, shakeTime: 0.03, shakeIntensity: 0.02, throttle: 0.10, glyph: '◌', label: 'CLANG' }
-        }
-      },
-      deathmatch: {
-        pistol: {
-          player_hit: { duration: 0.12, opacity: 0.88, pulse: 0.42, hitstop: 0.022, flash: 0.028, shakeTime: 0.03, shakeIntensity: 0.022, throttle: 0.07, glyph: '✦', label: 'HIT' },
-          kill: { duration: 0.18, opacity: 0.96, pulse: 0.82, hitstop: 0.058, flash: 0.055, shakeTime: 0.09, shakeIntensity: 0.065, throttle: 0, glyph: '✹', label: 'K.O.' },
-          environment_hit: { duration: 0.08, opacity: 0.68, pulse: 0.12, hitstop: 0.01, flash: 0.01, shakeTime: 0.015, shakeIntensity: 0.010, throttle: 0.10, glyph: '◌', label: 'CLANG' }
-        },
-        smg: {
-          player_hit: { duration: 0.07, opacity: 0.58, pulse: 0.14, hitstop: 0.006, flash: 0.008, shakeTime: 0.012, shakeIntensity: 0.006, throttle: 0.13, glyph: '•', label: 'HIT' },
-          kill: { duration: 0.16, opacity: 0.90, pulse: 0.68, hitstop: 0.036, flash: 0.04, shakeTime: 0.05, shakeIntensity: 0.032, throttle: 0, glyph: '✦', label: 'K.O.' },
-          environment_hit: { duration: 0.06, opacity: 0.50, pulse: 0.07, hitstop: 0.004, flash: 0.006, shakeTime: 0.010, shakeIntensity: 0.004, throttle: 0.16, glyph: '·', label: 'CLANG' }
-        },
-        shotgun: {
-          player_hit: { duration: 0.15, opacity: 0.94, pulse: 0.68, hitstop: 0.03, flash: 0.035, shakeTime: 0.055, shakeIntensity: 0.040, throttle: 0.10, glyph: '✶', label: 'HIT' },
-          kill: { duration: 0.22, opacity: 1.0, pulse: 0.98, hitstop: 0.072, flash: 0.072, shakeTime: 0.13, shakeIntensity: 0.09, throttle: 0, glyph: '✹', label: 'K.O.' },
-          environment_hit: { duration: 0.10, opacity: 0.74, pulse: 0.16, hitstop: 0.014, flash: 0.012, shakeTime: 0.020, shakeIntensity: 0.014, throttle: 0.12, glyph: '◌', label: 'CLANG' }
-        }
-      }
-    };
-
     const MODEL_YAW_OFFSET = 0; // adjust if character forward differs from -Z
     const SPAWN_POINTS = [
       new THREE.Vector3(-9, 0, 0),
@@ -1130,21 +1638,33 @@
 	    const visualToggleLabel = document.getElementById('visualToggleLabel');
 	    const dashEl = document.getElementById('dash');
 	    const dashCooldownEl = dashEl.querySelector('.cooldown');
+    const modeBadgeEl = document.getElementById('modeBadge');
+    const dangerBadgeEl = document.getElementById('dangerBadge');
 		    const modeSubtitleEl = document.getElementById('modeSubtitle');
 		    const modeRulesEl = document.getElementById('modeRules');
+    const menuEyebrowEl = document.getElementById('menuEyebrow');
+    const menuChipEl = document.getElementById('menuChip');
+    const menuModeStatEl = document.getElementById('menuModeStat');
+    const menuDifficultyStatEl = document.getElementById('menuDifficultyStat');
+    const menuTempoStatEl = document.getElementById('menuTempoStat');
 		    const modeButtons = Array.from(document.querySelectorAll('.modeBtn'));
 	    const difficultyLabelEl = document.getElementById('difficultyLabel');
 	    const difficultyButtons = Array.from(document.querySelectorAll('.difficultyBtn'));
 	    const nearMissFlash = document.getElementById('nearMissFlash');
 	    const hitFlash = document.getElementById('hitFlash');
+    const screenPulseEl = document.getElementById('screenPulse');
 	    const lowHpVignette = document.getElementById('lowHpVignette');
     const dramaticOverlay = document.getElementById('dramaticOverlay');
+    const combatFeedEl = document.getElementById('combatFeed');
+    const combatFeedLabelEl = document.getElementById('combatFeedLabel');
+    const combatFeedMetaEl = document.getElementById('combatFeedMeta');
     const shotConfirmEl = document.getElementById('shotConfirm');
     const shotConfirmGlyphEl = document.getElementById('shotConfirmGlyph');
     const shotConfirmTextEl = document.getElementById('shotConfirmText');
     const popupsEl = document.getElementById('popups');
     const killCamTextEl = document.getElementById('killCamText');
     const suddenDeathEl = document.getElementById('suddenDeath');
+    let bannerTimeoutId = null;
 
     const input = {
       keys: {},
@@ -1204,6 +1724,40 @@
       lastShotFeedback: null,
       lastNearMissAt: -Infinity,
       lastNearMissTargetTeam: null,
+      lastVisualEvent: null,
+      visualEventLog: [],
+      combatFeedTimer: 0,
+      combatFeedMaxTimer: 0,
+      combatFeedKind: 'idle',
+      combatFeedSeverity: 'calm',
+      combatFeedEmphasis: 'standard',
+      combatFeedLabel: '战场稳定',
+      combatFeedMeta: '先观察，再压枪。',
+      combatFeedLift: 8,
+      combatFeedScale: 1,
+      combatPulseTimer: 0,
+      combatPulseMaxTimer: 0,
+      combatPulseKind: 'idle',
+      combatPulseSeverity: 'calm',
+      combatPulseOpacity: 0,
+      combatPulseScale: 1,
+      combatPulseIntensity: 1,
+      foregroundSeverity: null,
+      foregroundSource: null,
+      foregroundTimer: 0,
+      backgroundSeverity: null,
+      backgroundSource: null,
+      backgroundTimer: 0,
+      dangerState: 'calm',
+      dangerSeverity: 'calm',
+      dangerTimer: 0,
+      dangerPulseClock: 0,
+      persistentDanger: false,
+      persistentDangerSeverity: null,
+      lastDangerSource: null,
+      lowHpActive: false,
+      lowHpPulse: 0,
+      shotRecoilPulse: 0,
       dramaticTimer: 0,
       dramaticTeam: null,
       timeScale: 1,
@@ -1297,7 +1851,7 @@
 	      updateVisualToggleUI();
 	      if (assets.manifest) {
 	        swapAllVisuals();
-	        showBanner(settings.usePlaceholders ? 'VISUALS: PLACEHOLDERS' : 'VISUALS: GLTF');
+	        showBanner(settings.usePlaceholders ? 'VISUALS: PLACEHOLDERS' : 'VISUALS: GLTF', { skipFeedback: true });
 	      }
 	    }
 
@@ -2631,6 +3185,7 @@
       buildPlayerPanels();
       updateRoundPips();
       updateBestTimeUI();
+      syncHudVisualState();
       updateHUD();
     }
 
@@ -2645,6 +3200,7 @@
       world.entities.forEach((entity, index) => {
         const panel = document.createElement('div');
         panel.className = `panel playerPanel pos-${positions[index] || 'tl'}${mode.playerCount > 2 ? ' compact' : ''}`;
+        if (!entity.isAI) panel.classList.add('is-player');
 
         const nameTag = document.createElement('div');
         nameTag.className = `nameTag ${entity.team}`;
@@ -2778,6 +3334,9 @@
 	        const label = getDifficultyLabel(current);
 	        difficultyLabelEl.textContent = `${modeName} AI 难度：${label}`;
 	      }
+      if (menuDifficultyStatEl) {
+        menuDifficultyStatEl.textContent = getDifficultyLabel(current);
+      }
 	    }
 
 	    function setGameMode(modeId) {
@@ -2788,12 +3347,21 @@
 	      });
 	      updateMenuModeCopy();
 	      updateDifficultyUI();
+        syncHudVisualState();
 	    }
 
     function updateMenuModeCopy() {
       if (!modeSubtitleEl || !modeRulesEl) return;
       const currentDifficulty = getDifficultyForMode(state.gameMode);
       const difficultyLabel = getDifficultyLabel(currentDifficulty);
+      const menuProfile = getMenuVisualProfile(state.gameMode);
+      const effectiveMode = getEffectiveGameMode(state.gameMode);
+      if (menuEyebrowEl) menuEyebrowEl.textContent = menuProfile.eyebrow;
+      if (menuChipEl) menuChipEl.textContent = menuProfile.badge;
+      if (menuModeStatEl) menuModeStatEl.textContent = effectiveMode?.name || state.gameMode;
+      if (menuTempoStatEl) menuTempoStatEl.textContent = menuProfile.tempo;
+      if (menuEyebrowEl) menuEyebrowEl.style.color = menuProfile.accent;
+      if (menuChipEl) menuChipEl.style.color = menuProfile.support;
       if (state.gameMode === 'deathmatch') {
         const dm = getEffectiveGameMode('deathmatch');
         modeSubtitleEl.textContent = currentDifficulty === 'novice'
@@ -2820,6 +3388,7 @@
       state.activeGameMode = resolvedModeId;
       state.activeDifficulty = getDifficultyForMode(resolvedModeId);
       hud.dataset.gamemode = resolvedModeId;
+      syncHudVisualState();
 
       const scale = mode.arenaScale ?? 1;
       CONFIG.arena.width = BASE_ARENA.width * scale;
@@ -2853,6 +3422,7 @@
         bannerEl.classList.remove('show');
         suddenDeathEl.classList.remove('show');
       }
+      syncHudVisualState();
     }
 
     function startMatch() {
@@ -3027,9 +3597,7 @@
       buildCoverNodes();
     }
 
-    function animate() {
-      requestAnimationFrame(animate);
-      const rawDt = world.clock.getDelta();
+    function runFrame(rawDt) {
       updateFxTimers(rawDt);
 
       if (state.mode === 'killCam') {
@@ -3048,6 +3616,11 @@
       updateCameraFx(rawDt);
       input.mouse.justPressed = false;
       world.renderer.render(world.scene, world.camera);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      runFrame(world.clock.getDelta());
     }
 
     function updateFxTimers(dt) {
@@ -3095,9 +3668,183 @@
     }
 
     function getWeaponFeedbackProfile(weaponId, modeId = state.gameMode) {
-      const modeKey = modeId === 'deathmatch' ? 'deathmatch' : 'duel';
-      const modeTuning = weaponFeedbackTuning[modeKey] || weaponFeedbackTuning.duel;
-      return modeTuning[weaponId] || modeTuning.pistol;
+      return getWeaponVisualProfile(modeId, weaponId);
+    }
+
+    function getGlobalFeedbackProfile(modeId = state.gameMode) {
+      return getGlobalVisualProfile(modeId);
+    }
+
+    function getHudVisualProfile(modeId = state.gameMode) {
+      return getGlobalFeedbackProfile(modeId).hud || visualTuning.duel.global.hud;
+    }
+
+    function getMenuVisualProfile(modeId = state.gameMode) {
+      return getGlobalFeedbackProfile(modeId).menu || visualTuning.duel.global.menu;
+    }
+
+    function getDangerLabel(kind) {
+      const severity = kind || 'calm';
+      if (severity === 'calm') return '战场稳定';
+      return getDangerSeverityConfig(state.gameMode, severity)?.badgeLabel || '战场稳定';
+    }
+
+    function getLayerSeverityRank(layer, severity) {
+      const order = dangerLayerPriority[layer] || ['calm', ...dangerSeverityOrder];
+      return order.indexOf(severity || 'calm');
+    }
+
+    function getForegroundSeverityConfig(modeId = state.gameMode, severity = fx.foregroundSeverity) {
+      return severity ? getDangerSeverityConfig(modeId, severity) : null;
+    }
+
+    function getBackgroundSeverityConfig(modeId = state.gameMode, severity = fx.backgroundSeverity) {
+      return severity ? getDangerSeverityConfig(modeId, severity) : null;
+    }
+
+    function getPersistentDangerConfig() {
+      return fx.persistentDangerSeverity
+        ? getDangerSeverityConfig(state.gameMode, fx.persistentDangerSeverity)
+        : null;
+    }
+
+    function getBadgeSeverity() {
+      if (fx.backgroundSeverity) return fx.backgroundSeverity;
+      if (fx.foregroundSeverity === 'pressure' || fx.foregroundSeverity === 'warning') {
+        return fx.foregroundSeverity;
+      }
+      return null;
+    }
+
+    function getTimerSeverity() {
+      return getBadgeSeverity();
+    }
+
+    function getCameraSeverity() {
+      return fx.foregroundSeverity || fx.backgroundSeverity || null;
+    }
+
+    function getCameraSeverityConfig() {
+      const severity = getCameraSeverity();
+      return severity ? getDangerSeverityConfig(state.gameMode, severity) : null;
+    }
+
+    function getCurrentDangerConfig() {
+      const severity = getBadgeSeverity();
+      return severity ? getDangerSeverityConfig(state.gameMode, severity) : null;
+    }
+
+    function getActiveVisualSeverity() {
+      return fx.foregroundSeverity || fx.backgroundSeverity || 'calm';
+    }
+
+    function syncDangerCompatibilityState() {
+      const activeSeverity = getActiveVisualSeverity();
+      fx.dangerSeverity = activeSeverity;
+      fx.dangerState = activeSeverity;
+      fx.lastDangerSource = fx.foregroundSource || fx.backgroundSource || null;
+    }
+
+    function applyForegroundSeverity(kind = null, duration = 0.3, options = {}) {
+      const severity = kind || null;
+      if (!severity || severity === 'calm') {
+        fx.foregroundSeverity = null;
+        fx.foregroundSource = null;
+        fx.foregroundTimer = 0;
+        syncDangerCompatibilityState();
+        syncHudVisualState();
+        return true;
+      }
+
+      const nextRank = getLayerSeverityRank('foreground', severity);
+      const currentRank = getLayerSeverityRank('foreground', fx.foregroundSeverity);
+      const shouldReplace = !fx.foregroundSeverity || options.force || nextRank >= currentRank || fx.foregroundTimer <= 0;
+      if (!shouldReplace) {
+        return false;
+      }
+
+      fx.foregroundSeverity = severity;
+      fx.foregroundSource = options.source || severity;
+      fx.foregroundTimer = Math.max(duration, 0);
+      syncDangerCompatibilityState();
+      syncHudVisualState();
+      return true;
+    }
+
+    function clearForegroundSeverity() {
+      fx.foregroundSeverity = null;
+      fx.foregroundSource = null;
+      fx.foregroundTimer = 0;
+      syncDangerCompatibilityState();
+      syncHudVisualState();
+    }
+
+    function applyBackgroundSeverity(kind = null, options = {}) {
+      const severity = kind || null;
+      if (!severity || severity === 'calm') {
+        fx.backgroundSeverity = null;
+        fx.backgroundSource = null;
+        fx.backgroundTimer = 0;
+        if (!options.keepPersistent) {
+          fx.persistentDanger = false;
+          fx.persistentDangerSeverity = null;
+        }
+        syncDangerCompatibilityState();
+        syncHudVisualState();
+        return true;
+      }
+
+      const nextRank = getLayerSeverityRank('background', severity);
+      const currentRank = getLayerSeverityRank('background', fx.backgroundSeverity);
+      const shouldReplace = !fx.backgroundSeverity || options.force || nextRank >= currentRank || (!fx.persistentDanger && fx.backgroundTimer <= 0);
+      if (!shouldReplace) {
+        return false;
+      }
+
+      fx.backgroundSeverity = severity;
+      fx.backgroundSource = options.source || severity;
+      fx.backgroundTimer = Math.max(options.duration || 0, 0);
+      if (options.persistent) {
+        fx.persistentDanger = true;
+        fx.persistentDangerSeverity = severity;
+      }
+      syncDangerCompatibilityState();
+      syncHudVisualState();
+      return true;
+    }
+
+    function clearBackgroundSeverity(source = null) {
+      fx.backgroundSeverity = null;
+      fx.backgroundSource = null;
+      fx.backgroundTimer = 0;
+      fx.persistentDanger = false;
+      fx.persistentDangerSeverity = null;
+      if (source) fx.lastDangerSource = null;
+      syncDangerCompatibilityState();
+      syncHudVisualState();
+    }
+
+    function clearPersistentDanger(source = null) {
+      clearBackgroundSeverity(source);
+    }
+
+    function resolveDangerProfile(event = {}) {
+      const modeId = event.modeId || state.gameMode;
+      const globalProfile = getGlobalFeedbackProfile(modeId);
+      const weaponProfile = event.weaponId ? getWeaponFeedbackProfile(event.weaponId, modeId) : null;
+      const eventConfig = weaponProfile?.[event.type] || globalProfile?.[event.type] || null;
+      const severity = event.severity || eventConfig?.severity || resolveEventSeverity(event.type) || null;
+      const severityConfig = getDangerSeverityConfig(modeId, severity);
+      return {
+        modeId,
+        globalProfile,
+        weaponProfile,
+        eventConfig,
+        severity,
+        severityConfig,
+        persistent: Boolean(event.persistent ?? severityConfig?.persistent),
+        source: event.source || event.type || null
+      };
     }
 
     function resetShotFeedbackHistory() {
@@ -3105,6 +3852,192 @@
       fx.lastShotFeedback = null;
       fx.lastNearMissAt = -Infinity;
       fx.lastNearMissTargetTeam = null;
+      fx.lastVisualEvent = null;
+      fx.visualEventLog = [];
+      fx.combatFeedKind = 'idle';
+      fx.combatFeedSeverity = 'calm';
+      fx.combatFeedLabel = '战场稳定';
+      fx.combatFeedMeta = '先观察，再压枪。';
+      fx.combatFeedTimer = 0;
+      fx.combatFeedMaxTimer = 0;
+      fx.combatFeedLift = 8;
+      fx.combatFeedScale = 1;
+      fx.combatPulseKind = 'idle';
+      fx.combatPulseSeverity = 'calm';
+      fx.combatPulseTimer = 0;
+      fx.combatPulseMaxTimer = 0;
+      fx.combatPulseOpacity = 0;
+      fx.combatPulseScale = 1;
+      fx.combatPulseIntensity = 1;
+      fx.foregroundSeverity = null;
+      fx.foregroundSource = null;
+      fx.foregroundTimer = 0;
+      fx.backgroundSeverity = null;
+      fx.backgroundSource = null;
+      fx.backgroundTimer = 0;
+      fx.dangerState = 'calm';
+      fx.dangerSeverity = 'calm';
+      fx.dangerTimer = 0;
+      fx.dangerPulseClock = 0;
+      fx.persistentDanger = false;
+      fx.persistentDangerSeverity = null;
+      fx.lastDangerSource = null;
+      fx.lowHpActive = false;
+      fx.lowHpPulse = 0;
+      fx.shotRecoilPulse = 0;
+      if (combatFeedEl) {
+        combatFeedEl.dataset.kind = 'idle';
+        combatFeedEl.dataset.severity = 'calm';
+        combatFeedEl.style.opacity = '0';
+        combatFeedEl.style.transform = 'translateX(-50%) translateY(8px) scale(0.98)';
+        combatFeedEl.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+        combatFeedEl.style.boxShadow = '0 16px 26px rgba(0, 0, 0, 0.16)';
+        combatFeedEl.style.background = 'rgba(7, 10, 15, 0.52)';
+        combatFeedLabelEl.textContent = fx.combatFeedLabel;
+        combatFeedMetaEl.textContent = fx.combatFeedMeta;
+      }
+      if (screenPulseEl) {
+        screenPulseEl.dataset.kind = 'idle';
+        screenPulseEl.dataset.severity = 'calm';
+        screenPulseEl.style.opacity = '0';
+        screenPulseEl.style.transform = 'scale(1)';
+      }
+      if (lowHpVignette) {
+        lowHpVignette.style.opacity = '0';
+      }
+      syncHudVisualState();
+    }
+
+    function syncHudVisualState() {
+      const hudProfile = getHudVisualProfile();
+      const activeSeverity = getActiveVisualSeverity();
+      const badgeSeverity = getBadgeSeverity() || 'calm';
+      const badgeConfig = badgeSeverity !== 'calm'
+        ? getDangerSeverityConfig(state.gameMode, badgeSeverity)
+        : null;
+      const timerConfig = getCurrentDangerConfig();
+      hud.dataset.visualDensity = hudProfile.density || getVisualModeKey(state.gameMode);
+      hud.dataset.danger = getTimerSeverity() || 'calm';
+      hud.dataset.severity = activeSeverity;
+      if (dangerBadgeEl) {
+        dangerBadgeEl.className = `hudChip ${badgeSeverity}`;
+        dangerBadgeEl.textContent = getDangerLabel(badgeSeverity);
+        dangerBadgeEl.style.color = badgeConfig?.chipText || '';
+        dangerBadgeEl.style.borderColor = badgeConfig?.timerAccent || '';
+        dangerBadgeEl.style.boxShadow = badgeConfig
+          ? `0 8px 20px rgba(0, 0, 0, 0.18), 0 0 24px ${badgeConfig.chipGlow}`
+          : '0 8px 20px rgba(0, 0, 0, 0.18)';
+        dangerBadgeEl.style.background = badgeConfig
+          ? `linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(11, 14, 20, 0.62)), rgba(11, 14, 20, 0.62)`
+          : 'rgba(11, 14, 20, 0.62)';
+      }
+      if (timerEl) {
+        timerEl.style.borderColor = timerConfig?.timerAccent || '';
+        timerEl.style.boxShadow = timerConfig
+          ? `0 16px 28px rgba(0, 0, 0, 0.22), 0 0 28px ${timerConfig.chipGlow}, inset 0 1px 0 rgba(255, 255, 255, 0.08)`
+          : '0 16px 28px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.08)';
+      }
+      if (modeBadgeEl) {
+        const mode = getEffectiveGameMode(state.gameMode);
+        const difficulty = getDifficultyLabel(getDifficultyForMode(state.gameMode));
+        modeBadgeEl.textContent = `${mode?.name || state.gameMode} · ${difficulty}`;
+      }
+    }
+
+    function setDangerState(kind = 'calm', duration = 0.3, options = {}) {
+      if (!kind || kind === 'calm') {
+        clearBackgroundSeverity(options.source || null);
+        return;
+      }
+      applyBackgroundSeverity(kind, {
+        duration,
+        persistent: Boolean(options.persistent),
+        source: options.source || kind
+      });
+    }
+
+    function pushVisualEvent(type, payload = {}) {
+      const entry = {
+        type,
+        weaponId: payload.weaponId ?? null,
+        label: payload.label ?? null,
+        severity: payload.severity ?? null,
+        danger: payload.danger ?? payload.severity ?? null,
+        source: payload.source ?? null,
+        at: Number(fx.shotFeedbackClock.toFixed(3))
+      };
+      fx.lastVisualEvent = entry;
+      fx.visualEventLog.push(entry);
+      if (fx.visualEventLog.length > 8) fx.visualEventLog.shift();
+      return entry;
+    }
+
+    function setCombatFeed(kind, label, meta, duration = 0.4, options = {}) {
+      const severity = options.severity || 'calm';
+      const severityProfile = options.severityProfile || null;
+      fx.combatFeedKind = kind;
+      fx.combatFeedSeverity = severity;
+      fx.combatFeedLabel = label;
+      fx.combatFeedMeta = meta;
+      fx.combatFeedTimer = duration;
+      fx.combatFeedMaxTimer = duration;
+      fx.combatFeedLift = severityProfile?.feedLift || 8;
+      fx.combatFeedScale = severityProfile?.feedScale || 1;
+      if (!combatFeedEl) return;
+      combatFeedEl.dataset.kind = kind;
+      combatFeedEl.dataset.severity = severity;
+      combatFeedEl.style.borderColor = severityProfile?.feedAccent || 'rgba(255, 255, 255, 0.08)';
+      combatFeedEl.style.boxShadow = severityProfile
+        ? `0 16px 26px rgba(0, 0, 0, 0.16), 0 0 24px ${severityProfile.feedAccent}`
+        : '0 16px 26px rgba(0, 0, 0, 0.16)';
+      combatFeedEl.style.background = severityProfile
+        ? `linear-gradient(180deg, rgba(255, 255, 255, 0.08), ${severityProfile.feedAccent}), rgba(7, 10, 15, 0.6)`
+        : 'rgba(7, 10, 15, 0.52)';
+      combatFeedLabelEl.textContent = label;
+      combatFeedMetaEl.textContent = meta;
+      combatFeedLabelEl.style.color = severityProfile?.feedText || '';
+      combatFeedMetaEl.style.color = severityProfile?.feedMeta || '';
+    }
+
+    function triggerScreenPulse(kind, intensity = 1, options = {}) {
+      const severity = options.severity || 'calm';
+      const severityProfile = options.severityProfile || null;
+      const duration = options.duration || Math.max(0.12, 0.16 * intensity);
+      fx.combatPulseKind = kind;
+      fx.combatPulseSeverity = severity;
+      fx.combatPulseIntensity = intensity;
+      fx.combatPulseOpacity = (severityProfile?.pulseOpacity ?? 0.24) * intensity;
+      fx.combatPulseScale = Math.max(1, severityProfile?.pulseScale ?? 1);
+      fx.combatPulseMaxTimer = duration;
+      fx.combatPulseTimer = duration;
+      if (!screenPulseEl) return;
+      screenPulseEl.dataset.kind = kind;
+      screenPulseEl.dataset.severity = severity;
+    }
+
+    function spawnImpactBurst(position, color, count = 5) {
+      if (!position || !Number.isFinite(position.x) || !Number.isFinite(position.z)) return;
+      for (let i = 0; i < count; i++) {
+        const size = 0.035 + Math.random() * 0.08;
+        const geometry = new THREE.SphereGeometry(size, 5, 5);
+        const material = new THREE.MeshBasicMaterial({
+          color,
+          transparent: true,
+          opacity: 0.92
+        });
+        const particle = new THREE.Mesh(geometry, material);
+        particle.position.copy(position);
+        particle.position.y += 0.22 + Math.random() * 0.55;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2.2 + Math.random() * 3.4;
+        particle.userData = {
+          velocity: new THREE.Vector3(Math.cos(angle) * speed, 1.4 + Math.random() * 2.4, Math.sin(angle) * speed),
+          life: 0.16 + Math.random() * 0.16,
+          maxLife: 0.16 + Math.random() * 0.16
+        };
+        world.scene.add(particle);
+        world.fxParticles.push(particle);
+      }
     }
 
     function buildShotOrigin(position, forwardBase) {
@@ -3127,16 +4060,93 @@
       fx.shotConfirmGlyph = '';
       fx.shotConfirmLabel = '';
       fx.shotConfirmOpacity = 0;
+      fx.combatPulseTimer = 0;
+      fx.combatPulseMaxTimer = 0;
+      fx.combatPulseKind = 'idle';
       if (!shotConfirmEl) return;
+      const offsetY = getHudVisualProfile().shotConfirmOffsetY || 0;
       shotConfirmEl.dataset.kind = 'idle';
       shotConfirmEl.style.opacity = '0';
-      shotConfirmEl.style.transform = 'translate(-50%, -50%) scale(0.82)';
+      shotConfirmEl.style.transform = `translate(-50%, calc(-50% + ${offsetY}px)) scale(0.82)`;
       shotConfirmGlyphEl.textContent = '';
       shotConfirmTextEl.textContent = '';
     }
 
     function updateShotFeedbackUI(dt) {
       fx.shotFeedbackClock += dt;
+      fx.dangerPulseClock += dt;
+
+      if (fx.foregroundTimer > 0) {
+        fx.foregroundTimer = Math.max(0, fx.foregroundTimer - dt);
+        if (fx.foregroundTimer <= 0) {
+          clearForegroundSeverity();
+        }
+      }
+
+      if (fx.backgroundTimer > 0 && !fx.persistentDanger) {
+        fx.backgroundTimer = Math.max(0, fx.backgroundTimer - dt);
+        if (fx.backgroundTimer <= 0) {
+          clearBackgroundSeverity();
+        }
+      }
+
+      const hudProfile = getHudVisualProfile();
+      const badgeSeverity = getBadgeSeverity();
+      const badgeConfig = badgeSeverity ? getDangerSeverityConfig(state.gameMode, badgeSeverity) : null;
+      if (dangerBadgeEl) {
+        const badgePulse = badgeConfig
+          ? 1 + Math.sin(fx.dangerPulseClock * Math.PI * 2 * (badgeConfig.badgePulseHz || 0)) * (badgeConfig.badgePulseAmp || 0)
+          : 1;
+        dangerBadgeEl.style.transform = `scale(${badgePulse.toFixed(3)})`;
+      }
+      if (timerEl) {
+        const timerPulse = badgeConfig
+          ? 1 + Math.sin(fx.dangerPulseClock * Math.PI * 2 * (badgeConfig.badgePulseHz || 0)) * ((badgeConfig.badgePulseAmp || 0) * 0.55)
+          : 1;
+        timerEl.style.transform = `scale(${((hudProfile.timerScale || 1) * timerPulse).toFixed(3)})`;
+      }
+
+      if (screenPulseEl) {
+        if (fx.combatPulseTimer > 0 && fx.combatPulseMaxTimer > 0) {
+          fx.combatPulseTimer = Math.max(0, fx.combatPulseTimer - dt);
+          const fade = fx.combatPulseTimer / Math.max(0.0001, fx.combatPulseMaxTimer);
+          const scale = 1 + ((fx.combatPulseScale || 1) - 1) * fade;
+          screenPulseEl.style.opacity = String(Math.min(1, fade * (fx.combatPulseOpacity || 0.24)));
+          screenPulseEl.style.transform = `scale(${scale.toFixed(3)})`;
+          if (fx.combatPulseTimer <= 0) {
+            screenPulseEl.dataset.kind = 'idle';
+            screenPulseEl.dataset.severity = 'calm';
+            screenPulseEl.style.opacity = '0';
+            screenPulseEl.style.transform = 'scale(1)';
+            fx.combatPulseSeverity = 'calm';
+          }
+        } else {
+          screenPulseEl.style.opacity = '0';
+          screenPulseEl.style.transform = 'scale(1)';
+        }
+      }
+      if (combatFeedEl) {
+        if (fx.combatFeedTimer > 0 && fx.combatFeedMaxTimer > 0) {
+          fx.combatFeedTimer = Math.max(0, fx.combatFeedTimer - dt);
+          const progress = 1 - (fx.combatFeedTimer / Math.max(0.0001, fx.combatFeedMaxTimer));
+          const fadeIn = THREE.MathUtils.clamp(progress / 0.2, 0, 1);
+          const fadeOut = THREE.MathUtils.clamp(fx.combatFeedTimer / Math.max(0.0001, fx.combatFeedMaxTimer * 0.75), 0, 1);
+          const opacity = Math.min(fadeIn, fadeOut);
+          const scale = THREE.MathUtils.lerp(0.985, fx.combatFeedScale || 1, opacity);
+          combatFeedEl.style.opacity = String(opacity);
+          combatFeedEl.style.transform = `translateX(-50%) translateY(${((1 - opacity) * (fx.combatFeedLift || 8)).toFixed(2)}px) scale(${scale.toFixed(3)})`;
+          if (fx.combatFeedTimer <= 0) {
+            combatFeedEl.style.opacity = '0';
+            combatFeedEl.style.transform = 'translateX(-50%) translateY(8px) scale(0.98)';
+            combatFeedEl.dataset.kind = 'idle';
+            combatFeedEl.dataset.severity = 'calm';
+            fx.combatFeedSeverity = 'calm';
+          }
+        } else {
+          combatFeedEl.style.opacity = '0';
+          combatFeedEl.style.transform = 'translateX(-50%) translateY(8px) scale(0.98)';
+        }
+      }
       if (!shotConfirmEl) return;
       if (fx.shotConfirmTimer <= 0 || fx.shotConfirmMaxTimer <= 0) {
         clearShotFeedback();
@@ -3151,9 +4161,10 @@
       const scaleStart = fx.shotConfirmKind === 'kill' ? 0.88 : 0.82;
       const scaleEnd = fx.shotConfirmKind === 'kill' ? 1.12 : 0.98;
       const scale = THREE.MathUtils.lerp(scaleStart, scaleEnd, Math.sin(Math.min(1, progress) * Math.PI * 0.75));
+      const offsetY = getHudVisualProfile().shotConfirmOffsetY || 0;
 
       shotConfirmEl.style.opacity = String(opacity);
-      shotConfirmEl.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(3)})`;
+      shotConfirmEl.style.transform = `translate(-50%, calc(-50% + ${offsetY}px)) scale(${scale.toFixed(3)})`;
 
       if (fx.shotConfirmTimer <= 0) {
         clearShotFeedback();
@@ -3171,12 +4182,224 @@
 
     function recordShotFeedbackEvent(attacker, shotResult, config = null) {
       if (!attacker || attacker.isAI || attacker !== getPlayer()) return;
+      const outcome = shotResult.outcome || shotResult.type || 'unknown';
       fx.lastShotFeedback = {
-        outcome: shotResult.outcome,
+        outcome,
         weaponId: shotResult.weaponId,
-        label: config?.label || (shotResult.outcome === 'miss' ? 'MISS' : shotResult.outcome.toUpperCase()),
+        label: config?.label || (outcome === 'miss' ? 'MISS' : outcome.toUpperCase()),
         at: Number(fx.shotFeedbackClock.toFixed(3))
       };
+    }
+
+    function presentCombatFeedback(event) {
+      if (!event?.type) return;
+      const dangerProfile = resolveDangerProfile(event);
+      const { modeId, eventConfig: config, severity, severityConfig, source } = dangerProfile;
+      const player = getPlayer();
+      const isLocalPlayerShot = Boolean(event.attacker && !event.attacker.isAI && event.attacker === player);
+      const isLocalPlayerTarget = Boolean(event.target && player && event.target === player);
+      const severityDuration = event.duration || config?.feedDuration || severityConfig?.feedDuration || config?.duration || 0.4;
+
+      const applySeverityShake = (shakeTime = 0, shakeIntensity = 0) => {
+        fx.shakeTime = Math.max(fx.shakeTime, shakeTime);
+        fx.shakeIntensity = Math.max(fx.shakeIntensity, shakeIntensity);
+      };
+
+      if (event.type === 'shot_fired') {
+        if (!isLocalPlayerShot || !config) return;
+        fx.fovPulse = Math.max(fx.fovPulse, config.pulse || 0);
+        fx.shotRecoilPulse = Math.max(fx.shotRecoilPulse, config.recoil || 0);
+        if (!fx.foregroundSeverity) {
+          triggerScreenPulse('shot_fired', 0.8, {
+            duration: Math.max(0.12, config.feedDuration || 0.12)
+          });
+        }
+        const feedThrottle = config.throttle ?? (event.weaponId === 'smg' ? 0.12 : 0.06);
+        if (!fx.foregroundSeverity && canPresentShotFeedback(event.weaponId, event.type, feedThrottle)) {
+          setCombatFeed('shot_fired', config.feedLabel, config.feedMeta, config.feedDuration);
+          pushVisualEvent(event.type, { weaponId: event.weaponId, label: config.feedLabel });
+        }
+        return;
+      }
+
+      if (event.type === 'player_hit' || event.type === 'kill' || event.type === 'environment_hit') {
+        if (!isLocalPlayerShot || !config) return;
+        const resultSeverity = event.type === 'kill' ? (severity || 'swing') : 'calm';
+        const resultSeverityConfig = resultSeverity !== 'calm'
+          ? getDangerSeverityConfig(modeId, resultSeverity)
+          : null;
+        recordShotFeedbackEvent(event.attacker, event, config);
+        if (!canPresentShotFeedback(event.weaponId, event.type, config.throttle)) return;
+        fx.shotFeedbackEventCount += 1;
+        fx.shotConfirmTimer = config.duration;
+        fx.shotConfirmMaxTimer = config.duration;
+        fx.shotConfirmKind = event.type;
+        fx.shotConfirmGlyph = config.glyph;
+        fx.shotConfirmLabel = config.label;
+        fx.shotConfirmOpacity = config.opacity;
+        shotConfirmEl.dataset.kind = event.type;
+        shotConfirmGlyphEl.textContent = config.glyph;
+        shotConfirmTextEl.textContent = config.label;
+        fx.fovPulse = Math.max(fx.fovPulse, config.pulse);
+        fx.hitFlashTimer = Math.max(fx.hitFlashTimer, config.flash);
+        fx.hitstopTimer = Math.max(fx.hitstopTimer, config.hitstop);
+        applySeverityShake(config.shakeTime, config.shakeIntensity);
+        const foregroundAccepted = resultSeverity !== 'calm'
+          ? applyForegroundSeverity(resultSeverity, Math.max(config.duration * 1.5, severityDuration), {
+              source: event.type,
+              force: true
+            })
+          : true;
+        const canShowCalmForeground = resultSeverity !== 'calm' || !fx.foregroundSeverity;
+        if (canShowCalmForeground) {
+          triggerScreenPulse(event.type, event.type === 'kill' ? 1.1 : 0.95, {
+            severity: foregroundAccepted ? resultSeverity : 'calm',
+            severityProfile: foregroundAccepted ? resultSeverityConfig : null,
+            duration: config.duration
+          });
+          setCombatFeed(
+            event.type,
+            event.type === 'kill' ? '终结确认' : event.type === 'player_hit' ? '命中确认' : '命中环境',
+            config.label,
+            config.duration * 1.5,
+            {
+              severity: foregroundAccepted ? resultSeverity : 'calm',
+              severityProfile: foregroundAccepted ? resultSeverityConfig : null
+            }
+          );
+        }
+        pushVisualEvent(event.type, {
+          weaponId: event.weaponId,
+          label: config.label,
+          severity: resultSeverity !== 'calm' ? resultSeverity : null,
+          source: event.type
+        });
+        const burstColor = event.type === 'kill'
+          ? 0xff8a3d
+          : event.type === 'player_hit'
+            ? getTeamColor(event.targetTeam || 'p2')
+            : COLORS.steel;
+        spawnImpactBurst(event.impactPosition, burstColor, config.impactCount || 5);
+        return;
+      }
+
+      if (event.type === 'near_miss') {
+        if (!config) return;
+        fx.nearMissTimer = Math.max(fx.nearMissTimer, config.flash);
+        fx.lastNearMissAt = Number(fx.shotFeedbackClock.toFixed(3));
+        fx.lastNearMissTargetTeam = event.target?.team || null;
+        fx.fovPulse = Math.max(fx.fovPulse, config.pulse || 0);
+        applySeverityShake(config.shakeTime || 0, config.shakeIntensity || 0);
+        const foregroundAccepted = applyForegroundSeverity(severity || 'warning', severityDuration, {
+          source
+        });
+        if (!foregroundAccepted) {
+          pushVisualEvent(event.type, {
+            severity,
+            source,
+            label: config.feedLabel
+          });
+          return;
+        }
+        setCombatFeed(
+          'near_miss',
+          config.feedLabel,
+          config.feedMeta,
+          severityDuration,
+          { severity, severityProfile: severityConfig }
+        );
+        triggerScreenPulse('near_miss', 0.9, {
+          severity,
+          severityProfile: severityConfig,
+          duration: severityDuration
+        });
+        pushVisualEvent(event.type, {
+          severity,
+          source,
+          label: config.feedLabel
+        });
+        return;
+      }
+
+      if (event.type === 'damage_taken') {
+        if (!isLocalPlayerTarget || !config) return;
+        fx.hitFlashTimer = Math.max(fx.hitFlashTimer, config.flash);
+        fx.fovPulse = Math.max(fx.fovPulse, config.pulse || 0);
+        applySeverityShake(config.shakeTime || 0, config.shakeIntensity || 0);
+        const foregroundAccepted = applyForegroundSeverity(severity || 'pressure', severityDuration, {
+          source
+        });
+        if (!foregroundAccepted) {
+          pushVisualEvent(event.type, {
+            severity,
+            source,
+            label: config.feedLabel
+          });
+          return;
+        }
+        setCombatFeed(
+          'damage_taken',
+          config.feedLabel,
+          config.feedMeta,
+          severityDuration,
+          { severity, severityProfile: severityConfig }
+        );
+        triggerScreenPulse('damage_taken', 0.9, {
+          severity,
+          severityProfile: severityConfig,
+          duration: severityDuration
+        });
+        pushVisualEvent(event.type, {
+          severity,
+          source,
+          label: config.feedLabel
+        });
+        return;
+      }
+
+      if (event.type === 'low_hp') {
+        if (!isLocalPlayerTarget || !config) return;
+        fx.lowHpActive = true;
+        fx.lowHpPulse = Math.max(fx.lowHpPulse, config.pulse || 0);
+        applyBackgroundSeverity(severity || 'critical', {
+          duration: severityDuration,
+          persistent: true,
+          source
+        });
+        pushVisualEvent(event.type, {
+          severity,
+          source,
+          label: config.feedLabel
+        });
+        return;
+      }
+
+      if (event.type === 'round_transition') {
+        if (!config) return;
+        fx.fovPulse = Math.max(fx.fovPulse, config.pulse || 0);
+        applySeverityShake(config.shakeTime || 0, config.shakeIntensity || 0);
+        applyForegroundSeverity(severity || 'swing', severityDuration, {
+          source,
+          force: true
+        });
+        setCombatFeed(
+          'round_transition',
+          event.label || config.feedLabel,
+          event.meta || config.feedMeta,
+          severityDuration,
+          { severity, severityProfile: severityConfig }
+        );
+        triggerScreenPulse('round_transition', 0.95, {
+          severity,
+          severityProfile: severityConfig,
+          duration: severityDuration
+        });
+        pushVisualEvent(event.type, {
+          label: event.label || config.feedLabel,
+          severity,
+          source
+        });
+      }
     }
 
     function resolveShotPellet(attacker, origin, end) {
@@ -3225,6 +4448,7 @@
         shotResult.didAnyHit = true;
         shotResult.didPlayerHit = true;
         shotResult.targetTeam = shotResult.targetTeam || pelletResult.hit.team;
+        shotResult.hitPosition = shotResult.hitPosition || pelletResult.shotEnd.clone();
         if (didKill) shotResult.didKill = true;
         if (!knockState.applied) {
           applyKnockback(pelletResult.hit, attacker.position, weapon.knockback);
@@ -3236,6 +4460,7 @@
       if (pelletResult.hitType === 'barrel') {
         shotResult.didAnyHit = true;
         shotResult.didEnvironmentHit = true;
+        shotResult.hitPosition = shotResult.hitPosition || pelletResult.shotEnd.clone();
         applyBarrelDamage(pelletResult.hit, weapon.damage, attacker.team);
         return;
       }
@@ -3243,6 +4468,7 @@
       if (pelletResult.hitType === 'cover') {
         shotResult.didAnyHit = true;
         shotResult.didEnvironmentHit = true;
+        shotResult.hitPosition = shotResult.hitPosition || pelletResult.shotEnd.clone();
         applyCoverDamage(pelletResult.hit, weapon.damage, attacker.team);
         return;
       }
@@ -3269,6 +4495,7 @@
         weaponId: shotResult.weaponId,
         outcome,
         targetTeam: shotResult.targetTeam,
+        hitPosition: shotResult.hitPosition ? shotResult.hitPosition.clone() : null,
         nearMissStart: shotResult.shotStart,
         nearMissEnd: shotResult.closestMissEnd,
         nearMissTarget: shotResult.closestMissTarget
@@ -3276,13 +4503,6 @@
     }
 
     function presentShotFeedback(attacker, shotResult) {
-      const isLocalPlayerShot = Boolean(attacker && !attacker.isAI && attacker === getPlayer());
-      const profile = isLocalPlayerShot ? getWeaponFeedbackProfile(shotResult.weaponId) : null;
-      const config = shotResult.outcome !== 'miss' ? profile?.[shotResult.outcome] : null;
-      if (isLocalPlayerShot) {
-        recordShotFeedbackEvent(attacker, shotResult, config);
-      }
-
       if (shotResult.outcome === 'miss') {
         if (shotResult.nearMissStart && shotResult.nearMissEnd && shotResult.nearMissTarget) {
           checkNearMiss(shotResult.nearMissStart, shotResult.nearMissEnd, shotResult.nearMissTarget);
@@ -3290,25 +4510,18 @@
         return;
       }
 
-      if (!isLocalPlayerShot) return;
-      if (!config) return;
-      if (!canPresentShotFeedback(shotResult.weaponId, shotResult.outcome, config.throttle)) return;
-
-      fx.shotFeedbackEventCount += 1;
-      fx.shotConfirmTimer = config.duration;
-      fx.shotConfirmMaxTimer = config.duration;
-      fx.shotConfirmKind = shotResult.outcome;
-      fx.shotConfirmGlyph = config.glyph;
-      fx.shotConfirmLabel = config.label;
-      fx.shotConfirmOpacity = config.opacity;
-      shotConfirmEl.dataset.kind = shotResult.outcome;
-      shotConfirmGlyphEl.textContent = config.glyph;
-      shotConfirmTextEl.textContent = config.label;
-      fx.fovPulse = Math.max(fx.fovPulse, config.pulse);
-      fx.hitFlashTimer = Math.max(fx.hitFlashTimer, config.flash);
-      fx.hitstopTimer = Math.max(fx.hitstopTimer, config.hitstop);
-      fx.shakeTime = Math.max(fx.shakeTime, config.shakeTime);
-      fx.shakeIntensity = Math.max(fx.shakeIntensity, config.shakeIntensity);
+      const impactPosition = shotResult.hitPosition
+        ? shotResult.hitPosition.clone()
+        : shotResult.targetTeam
+          ? getEntityByTeam(shotResult.targetTeam)?.position?.clone?.() || null
+          : shotResult.nearMissEnd?.clone?.() || null;
+      presentCombatFeedback({
+        type: shotResult.outcome,
+        attacker,
+        weaponId: shotResult.weaponId,
+        targetTeam: shotResult.targetTeam,
+        impactPosition
+      });
     }
 
     function updateGame(dt) {
@@ -3606,6 +4819,12 @@
           } else {
             state.suddenDeath = true;
             suddenDeathEl.classList.add('show');
+            presentCombatFeedback({
+              type: 'round_transition',
+              label: '殊死一搏',
+              meta: '多人并列，进入突然死亡',
+              duration: 1.0
+            });
           }
         } else {
           const player = getPlayer();
@@ -3613,6 +4832,12 @@
           if (player && enemy && player.hp === enemy.hp) {
             state.suddenDeath = true;
             suddenDeathEl.classList.add('show');
+            presentCombatFeedback({
+              type: 'round_transition',
+              label: '殊死一搏',
+              meta: '血量持平，下一击决胜',
+              duration: 1.0
+            });
           } else if (player && enemy) {
             endRound(player.hp > enemy.hp ? 'p1' : 'p2', true);
           }
@@ -3939,6 +5164,7 @@
       const aiTuning = isAI ? (getAiTuning(attacker) || null) : null;
       const forwardBase = dir.clone().normalize();
       const origin = getShotOrigin(attacker, forwardBase);
+      const shotVisual = isAI ? null : getWeaponFeedbackProfile(attacker.weapon.id)?.shot_fired;
 
       const pellets = weapon.pellets || 1;
       const shotResult = {
@@ -3949,6 +5175,7 @@
         didEnvironmentHit: false,
         didKill: false,
         targetTeam: null,
+        hitPosition: null,
         closestMissDist: Infinity,
         closestMissEnd: null,
         closestMissTarget: null
@@ -3975,19 +5202,32 @@
         const drawTracer = isShotgun || pellets === 1 || i < 3;
         if (drawTracer) {
           if (isShotgun) {
-            spawnTracer(origin, shotEnd, 0xfff1cc, 0.09, { additive: true, opacity: 0.92 });
+            spawnTracer(origin, shotEnd, shotVisual?.tracerColor ?? 0xfff1cc, shotVisual?.tracerLife ?? 0.09, {
+              additive: true,
+              opacity: shotVisual?.tracerOpacity ?? 0.92
+            });
           } else {
-            spawnTracer(origin, shotEnd, weapon.tracer, 0.06, { additive: true, opacity: 0.8 });
+            spawnTracer(origin, shotEnd, shotVisual?.tracerColor ?? weapon.tracer, shotVisual?.tracerLife ?? 0.06, {
+              additive: true,
+              opacity: shotVisual?.tracerOpacity ?? 0.8
+            });
           }
         }
 
         commitShotPellet(attacker, weapon, isAI, aiTuning, origin, pelletResult, shotResult, knockState);
       }
 
-      triggerMuzzle(attacker, forwardBase, weapon);
-      triggerRecoil();
+      triggerMuzzle(attacker, forwardBase, weapon, shotVisual);
+      triggerRecoil(isAI ? 0.08 : (shotVisual?.pulse ?? 0.24) * 0.42);
       triggerShootAnimation(attacker);
       attacker.firedRecentlyTimer = 0.25;
+      presentCombatFeedback({
+        type: 'shot_fired',
+        attacker,
+        weaponId: attacker.weapon.id,
+        origin: origin.clone(),
+        forward: forwardBase.clone()
+      });
 
       const fireRateBase = isAI ? weapon.fireRateAI : weapon.fireRate;
       const fireRate = fireRateBase * (isAI ? (aiTuning?.aiFireRateMul ?? 1) : 1);
@@ -4048,7 +5288,13 @@
       }
 
       if (target === getPlayer()) {
-        fx.hitFlashTimer = Math.max(fx.hitFlashTimer, 0.05);
+        presentCombatFeedback({
+          type: 'damage_taken',
+          target,
+          amount,
+          sourceTeam,
+          attacker
+        });
       }
 
       // Spawn hit effect at target position
@@ -4744,9 +5990,12 @@
 	      const dist = distancePointToSegmentXZ(target.position, start, end);
 	      const threshold = CONFIG.player.hurtRadius + CONFIG.nearMissDrama.distance;
 	      if (dist <= threshold) {
-        fx.nearMissTimer = 0.22;
-        fx.lastNearMissAt = Number(fx.shotFeedbackClock.toFixed(3));
-        fx.lastNearMissTargetTeam = target.team;
+        presentCombatFeedback({
+          type: 'near_miss',
+          target,
+          start: start.clone(),
+          end: end.clone()
+        });
         fx.dramaticTimer = CONFIG.nearMissDrama.duration;
         fx.dramaticTeam = target.team;
         setTimeScale(CONFIG.nearMissDrama.timeScale, CONFIG.nearMissDrama.duration);
@@ -4976,6 +6225,7 @@
 
     function updateHUD() {
       const showLives = state.gameMode === 'deathmatch';
+      const hudProfile = getHudVisualProfile();
       world.entities.forEach((entity) => {
         const panel = hudPanels.get(entity.id);
         if (!panel) return;
@@ -4986,14 +6236,28 @@
           panel.livesInfo.textContent = `剩余生命: ${Math.max(0, entity.lives ?? 0)}`;
         }
         panel.panel.classList.toggle('down', entity.isDead || entity.eliminated);
+        panel.panel.style.transform = `scale(${hudProfile.playerPanelScale || 1})`;
       });
       timerEl.textContent = `剩余时间: ${formatTime(state.timeLeft)}`;
       timerEl.classList.toggle('low', state.timeLeft <= 30);
+      timerEl.style.transform = `scale(${hudProfile.timerScale || 1})`;
       const player = getPlayer();
       const cooldownPct = player
         ? THREE.MathUtils.clamp(player.dashCooldown / CONFIG.movement.dashCooldown, 0, 1)
         : 0;
       dashCooldownEl.style.width = `${cooldownPct * 100}%`;
+      const lowHpConfig = getGlobalFeedbackProfile().low_hp;
+      if (player && lowHpConfig) {
+        const isCritical = player.hp <= lowHpConfig.threshold;
+        if (isCritical && !fx.lowHpActive) {
+          presentCombatFeedback({ type: 'low_hp', target: player });
+        } else if (!isCritical && fx.lowHpActive) {
+          fx.lowHpActive = false;
+          fx.lowHpPulse = 0;
+          clearPersistentDanger('low_hp');
+        }
+      }
+      syncHudVisualState();
       updateLeaderboard();
     }
 
@@ -5070,9 +6334,17 @@
       });
     }
 
-    function showBanner(text) {
+    function showBanner(text, options = {}) {
       bannerEl.textContent = text;
       bannerEl.classList.add('show');
+      if (!options.skipFeedback) {
+        presentCombatFeedback({
+          type: 'round_transition',
+          label: text,
+          meta: options.meta,
+          duration: options.duration
+        });
+      }
       setTimeout(() => bannerEl.classList.remove('show'), 1000);
     }
 
@@ -5118,8 +6390,8 @@
       fx.timeScaleTimer = duration;
     }
 
-    function triggerRecoil() {
-      fx.fovPulse = 0.6;
+    function triggerRecoil(intensity = 0.24) {
+      fx.fovPulse = Math.max(fx.fovPulse, intensity);
     }
 
     function triggerShootAnimation(entity) {
@@ -5130,7 +6402,7 @@
       action.play();
     }
 
-    function triggerMuzzle(attacker, dir, weapon = null) {
+    function triggerMuzzle(attacker, dir, weapon = null, visualConfig = null) {
       if (!attacker.muzzle) return;
       // Position muzzle flash at the gun tip in WORLD space
       // Gun is held to the right side, so offset sideways + forward in facing direction
@@ -5142,10 +6414,10 @@
       muzzlePos.addScaledVector(forward, 0.9);
       muzzlePos.addScaledVector(right, 0.25);
       attacker.muzzle.position.copy(muzzlePos);
-      const size = weapon?.muzzleSize ?? 0.3;
+      const size = (weapon?.muzzleSize ?? 0.3) * (visualConfig?.muzzleScale ?? 1);
       attacker.muzzle.scale.set(size, size, size);
       attacker.muzzle.visible = true;
-      attacker.muzzle.life = weapon?.pellets ? 0.08 : 0.06;
+      attacker.muzzle.life = visualConfig?.muzzleLife ?? (weapon?.pellets ? 0.08 : 0.06);
     }
 
     function spawnTracer(start, end, color = COLORS.tracer, life = 0.05, options = null) {
@@ -5307,10 +6579,17 @@
         targetPos.y += 2;
       }
 
-      if (player && player.hp <= 35) {
-        targetFov -= 2;
-        const t = THREE.MathUtils.clamp((35 - player.hp) / 35, 0, 1);
-        lowHpVignette.style.opacity = String(0.75 * t);
+      const lowHpProfile = getGlobalFeedbackProfile().low_hp;
+      const persistentDangerConfig = getPersistentDangerConfig();
+      const cameraSeverityConfig = getCameraSeverityConfig();
+      if (player && lowHpProfile && fx.backgroundSeverity === 'critical' && player.hp <= lowHpProfile.threshold) {
+        targetFov -= 2.2;
+        const t = THREE.MathUtils.clamp((lowHpProfile.threshold - player.hp) / Math.max(1, lowHpProfile.threshold), 0, 1);
+        const vignetteMax = persistentDangerConfig?.vignetteOpacity ?? lowHpProfile.vignetteMax;
+        const pulse = persistentDangerConfig
+          ? 1 + Math.sin(fx.dangerPulseClock * Math.PI * 2 * (persistentDangerConfig.vignettePulseHz || 0)) * (persistentDangerConfig.vignettePulseAmp || 0)
+          : 1;
+        lowHpVignette.style.opacity = String(Math.min(1, vignetteMax * t * pulse + fx.lowHpPulse * 0.06));
       } else {
         lowHpVignette.style.opacity = '0';
       }
@@ -5326,12 +6605,21 @@
         }
       }
 
+      if (cameraSeverityConfig) {
+        targetFov += cameraSeverityConfig.cameraFovBias || 0;
+      }
+
+      targetPos.y += fx.shotRecoilPulse * 0.45;
+      targetLookAt.y += fx.shotRecoilPulse * 0.08;
+
       const lerpK = 1 - Math.exp(-dt * 3);
       world.cameraState.pos.lerp(targetPos, lerpK);
       world.cameraState.lookAt.lerp(targetLookAt, lerpK);
       world.cameraState.fov = THREE.MathUtils.lerp(world.cameraState.fov, targetFov, lerpK);
 
-      const shake = fx.shakeTime > 0 ? fx.shakeIntensity : 0;
+      const shake = fx.shakeTime > 0
+        ? fx.shakeIntensity * (cameraSeverityConfig?.cameraShakeMul ?? 1)
+        : 0;
       if (fx.shakeTime > 0) fx.shakeTime -= dt;
       const shakeOffset = new THREE.Vector3(
         (Math.random() - 0.5) * shake,
@@ -5340,7 +6628,9 @@
       );
 
       fx.fovPulse = moveToward(fx.fovPulse, 0, dt * 5);
-      world.camera.fov = world.cameraState.fov + fx.fovPulse * 2;
+      fx.shotRecoilPulse = moveToward(fx.shotRecoilPulse, 0, dt * 4.5);
+      fx.lowHpPulse = moveToward(fx.lowHpPulse, 0, dt * 2.2);
+      world.camera.fov = world.cameraState.fov + fx.fovPulse * 2 + fx.shotRecoilPulse;
       world.camera.updateProjectionMatrix();
       world.camera.position.copy(world.cameraState.pos).add(shakeOffset);
       world.camera.lookAt(world.cameraState.lookAt);
@@ -5951,15 +7241,27 @@
 
     function createPhase21TestApi() {
       return {
-        startMatch(modeId = 'duel') {
+        startMatch(modeId = 'duel', options = {}) {
           if (CONFIG.gameModes[modeId] && state.gameMode !== modeId) {
             setGameMode(modeId);
           }
           startMatch();
+          if (options.forcePlaying) {
+            setMode('playing');
+          }
           resetDebugShotState();
           return JSON.parse(renderGameToText());
         },
         snapshot() {
+          return JSON.parse(renderGameToText());
+        },
+        resetVisualState() {
+          resetDebugShotState();
+          updateHUD();
+          return JSON.parse(renderGameToText());
+        },
+        forcePlaying() {
+          setMode('playing');
           return JSON.parse(renderGameToText());
         },
         setPlayerWeapon(weaponId) {
@@ -5973,7 +7275,24 @@
           entity.isDead = false;
           entity.eliminated = false;
           entity.respawnTimer = 0;
+          updateHUD();
           return JSON.parse(renderGameToText());
+        },
+        damagePlayer(amount = 15, sourceTeam = 'p2') {
+          const player = getPlayer();
+          if (!player) {
+            return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'damagePlayer', false, {
+              reason: 'player_not_found',
+              amount: roundValue(amount, 1)
+            });
+          }
+          const attacker = getEntityByTeam(sourceTeam) || null;
+          applyDamage(player, amount, sourceTeam, attacker, null, attacker?.position?.clone?.() || null, player.position.clone());
+          updateHUD();
+          return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'damagePlayer', true, {
+            amount: roundValue(amount, 1),
+            sourceTeam
+          });
         },
         setEntityPosition(team, x, z) {
           const entity = getEntityByTeam(team);
@@ -6088,6 +7407,26 @@
           return annotatePhase21Snapshot(snapshot, 'firePlayerNearMiss', true, {
             targetTeam: team
           });
+        },
+        triggerRoundTransition(label = '回合节奏切换', meta = '重置站位，争夺中线') {
+          presentCombatFeedback({
+            type: 'round_transition',
+            label,
+            meta
+          });
+          return annotatePhase21Snapshot(JSON.parse(renderGameToText()), 'triggerRoundTransition', true, {
+            label,
+            meta
+          });
+        },
+        getVisualMetrics() {
+          return JSON.parse(renderGameToText()).visualState;
+        },
+        advance(ms = 1000 / 60) {
+          if (typeof window.advanceTime === 'function') {
+            window.advanceTime(ms);
+          }
+          return JSON.parse(renderGameToText());
         }
       };
     }
@@ -6104,10 +7443,54 @@
 
     function renderGameToText() {
       const player = getPlayer();
+      const foregroundSeverity = fx.foregroundSeverity || null;
+      const backgroundSeverity = fx.backgroundSeverity || null;
+      const severity = foregroundSeverity || backgroundSeverity || 'calm';
+      const layerSeverities = {
+        badge: getBadgeSeverity(),
+        feed: fx.combatFeedTimer > 0 && fx.combatFeedSeverity !== 'calm' ? fx.combatFeedSeverity : null,
+        pulse: fx.combatPulseTimer > 0 && fx.combatPulseSeverity !== 'calm' ? fx.combatPulseSeverity : null,
+        vignette: (backgroundSeverity === 'critical' && Number(lowHpVignette?.style?.opacity || 0) > 0.01)
+          ? 'critical'
+          : null,
+        camera: getCameraSeverity()
+      };
+      const activeLayers = {
+        badge: Boolean(layerSeverities.badge),
+        feed: Boolean(layerSeverities.feed),
+        pulse: Boolean(layerSeverities.pulse),
+        vignette: Boolean(layerSeverities.vignette),
+        camera: Boolean(layerSeverities.camera)
+      };
+      const visualState = {
+        density: getHudVisualProfile().density,
+        danger: severity,
+        severity: severity,
+        foregroundSeverity: foregroundSeverity,
+        backgroundSeverity: backgroundSeverity,
+        persistentDanger: fx.persistentDanger,
+        lastDangerSource: fx.lastDangerSource,
+        layerSeverities: layerSeverities,
+        activeLayers: activeLayers,
+        lowHpActive: fx.lowHpActive,
+        shotConfirmKind: fx.shotConfirmTimer > 0 ? fx.shotConfirmKind : null,
+        combatFeed: fx.combatFeedTimer > 0 ? {
+          kind: fx.combatFeedKind,
+          severity: fx.combatFeedSeverity !== 'calm' ? fx.combatFeedSeverity : null,
+          label: fx.combatFeedLabel,
+          meta: fx.combatFeedMeta
+        } : null,
+        screenPulseKind: fx.combatPulseTimer > 0 ? fx.combatPulseKind : null,
+        screenPulseSeverity: fx.combatPulseTimer > 0 && fx.combatPulseSeverity !== 'calm' ? fx.combatPulseSeverity : null,
+        activeFxCount: world.fxParticles.length + world.fxSprites.length + world.fxLines.length,
+        recentEvents: fx.visualEventLog.map((entry) => ({ ...entry })),
+        supportedEvents: visualEventTypes.slice()
+      };
       const payload = {
         mode: state.mode,
         gameMode: state.gameMode,
         difficulty: getDifficultyForMode(state.gameMode),
+        visualState: visualState,
         shotConfirm: fx.shotConfirmTimer > 0
           ? { kind: fx.shotConfirmKind, label: fx.shotConfirmLabel }
           : null,
@@ -6151,6 +7534,14 @@
       return JSON.stringify(payload);
     }
 
+    window.advanceTime = (ms = 1000 / 60) => {
+      const step = 1000 / 60;
+      const steps = Math.max(1, Math.round(ms / step));
+      for (let i = 0; i < steps; i++) {
+        runFrame(1 / 60);
+      }
+      return JSON.parse(renderGameToText());
+    };
     window.render_game_to_text = renderGameToText;
     window.phase21TestApi = createPhase21TestApi();
   </script>

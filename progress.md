@@ -72,3 +72,39 @@ Original prompt: PLEASE IMPLEMENT THIS PLAN for the v1.0 beginner-friendly diffi
   - `deathmatch + smg`：4 次快速连射命中把 `p2.hp` 从 `65` 打到 `33`，但 `shotFeedbackEventCount` 始终保持 `1`，证明节流有效。
   - reset 路径：post-kill round reset、restart、menu load 都会把 `shotConfirm / shotFeedbackEventCount / lastShotFeedback / lastNearMiss` 清空。
   - Playwright 控制台错误数：`0`。
+
+- 2026-03-10 visual pass:
+- Added failing contract test for visual system module + runtime seams, then implemented src/visual-tuning.js.
+- Reworked menu/HUD presentation, introduced unified presentCombatFeedback(), visual event log, visualState snapshot, and window.advanceTime().
+- Fixed attemptFire shotVisual scope bug found during browser validation.
+- Verified via browser: contract test green; duel hit/kill, deathmatch density, damage_taken, near_miss, low_hp visualState all observed.
+- Ran develop-web-game Playwright client against http://127.0.0.1:4173/index.html and reviewed output/visual-pass-client/shot-0.png + state-0.json; no client error file generated.
+
+- 2026-03-10 visual pass round 2:
+- Added severity-first danger tuning in `src/visual-tuning.js`: `dangerSeverityOrder`, `eventSeverityMap`, `dangerSeverityMatrix`, and helpers for runtime severity resolution.
+- Reworked `index.html` combat feedback flow so `presentCombatFeedback()` resolves `pressure / warning / critical / swing` before driving badge, timer, combatFeed, screenPulse, vignette, and camera response.
+- Extended runtime state with `severity`, `persistentDanger`, `lastDangerSource`, and `activeLayers`; `phase21TestApi` now includes `triggerRoundTransition()` for swing validation without expanding into a generic debug surface.
+- Fixed reset leakage from round-one visuals by clearing persistent danger, `lowHpVignette`, and pulse/feed severity metadata during feedback resets.
+- Verification results:
+  - `node --test scripts/visual-system.contract.test.mjs` passed after the second-round contract expansion.
+  - Browser validation via `phase21TestApi` confirmed:
+    - `damage_taken -> pressure`
+    - `firePlayerNearMiss() -> warning`
+    - `low_hp -> critical` with `persistentDanger=true`
+    - healing back above threshold clears persistent danger and returns to `calm`
+    - `kill` and `triggerRoundTransition()` both resolve to `swing`
+    - `deathmatch` still reports `density=compact` and resets danger state to `calm`
+  - Playwright console error count remained `0`.
+  - Ran develop-web-game client against http://127.0.0.1:4173/index.html with `Enter` choreography and reviewed `output/visual-pass-client-round2/shot-0.png` + `state-0.json`; no `errors-0.json` was produced.
+
+- 2026-03-10 visual pass round 3:
+- Split danger presentation into foreground/background tracks in `index.html` so `swing` owns feed/pulse/camera while persistent `critical` owns badge/timer/vignette; `low_hp` no longer steals foreground conclusion space from kill or round-transition events.
+- Expanded `src/visual-tuning.js` with track-aware danger envelopes and priorities: `dangerLayerPriority`, per-severity pulse/feed/vignette/camera fields, and `deathmatch` foreground scaling while preserving persistent `critical` behavior.
+- Extended `render_game_to_text().visualState` with `foregroundSeverity`, `backgroundSeverity`, and `layerSeverities`, while keeping `severity` as the compatibility facade for existing consumers.
+- Added `phase21TestApi.resetVisualState()` as a narrow verification seam and created `scripts/visual-system.browser.test.mjs` to lock eight browser scenarios plus screenshot/json artifacts into a repeatable regression pass.
+- Fixed the overlap regression discovered during browser automation: `firePlayerAtTeam()` resets feedback by default, so the overlap scenario now opts into `{ resetFeedback: false }` to preserve background `critical` while asserting foreground `swing`.
+- Verification results:
+  - `node --test scripts/visual-system.contract.test.mjs` passed with the round-three static/runtime seam checks.
+  - `node scripts/visual-system.browser.test.mjs --url http://127.0.0.1:4173/index.html --out-dir output/visual-regression` passed all 8 scenarios and produced `results.json`, `critical.png`, and `critical-plus-swing.png`.
+  - `runtimeErrors` from the browser regression run remained empty, and Playwright console/page error count stayed `0`.
+  - Ran develop-web-game client against http://127.0.0.1:4173/index.html and reviewed `output/visual-pass-client-round3/shot-0.png` + `state-0.json`; no `errors-0.json` was produced.

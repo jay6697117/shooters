@@ -1,0 +1,459 @@
+{
+  "url": "http://127.0.0.1:4173/index.html",
+  "generatedAt": "2026-03-10T06:10:22.071Z",
+  "results": [
+    {
+      "name": "duel-calm",
+      "ok": true,
+      "failures": [],
+      "visualState": {
+        "density": "focus",
+        "danger": "calm",
+        "severity": "calm",
+        "foregroundSeverity": null,
+        "backgroundSeverity": null,
+        "persistentDanger": false,
+        "lastDangerSource": null,
+        "layerSeverities": {
+          "badge": null,
+          "feed": null,
+          "pulse": null,
+          "vignette": null,
+          "camera": null
+        },
+        "activeLayers": {
+          "badge": false,
+          "feed": false,
+          "pulse": false,
+          "vignette": false,
+          "camera": false
+        },
+        "lowHpActive": false,
+        "shotConfirmKind": null,
+        "combatFeed": null,
+        "screenPulseKind": null,
+        "screenPulseSeverity": null,
+        "activeFxCount": 0,
+        "recentEvents": [],
+        "supportedEvents": [
+          "shot_fired",
+          "player_hit",
+          "kill",
+          "environment_hit",
+          "near_miss",
+          "damage_taken",
+          "low_hp",
+          "round_transition"
+        ]
+      }
+    },
+    {
+      "name": "damage-pressure",
+      "ok": true,
+      "failures": [],
+      "visualState": {
+        "density": "focus",
+        "danger": "pressure",
+        "severity": "pressure",
+        "foregroundSeverity": "pressure",
+        "backgroundSeverity": null,
+        "persistentDanger": false,
+        "lastDangerSource": "damage_taken",
+        "layerSeverities": {
+          "badge": "pressure",
+          "feed": "pressure",
+          "pulse": "pressure",
+          "vignette": null,
+          "camera": "pressure"
+        },
+        "activeLayers": {
+          "badge": true,
+          "feed": true,
+          "pulse": true,
+          "vignette": false,
+          "camera": true
+        },
+        "lowHpActive": false,
+        "shotConfirmKind": null,
+        "combatFeed": {
+          "kind": "damage_taken",
+          "severity": "pressure",
+          "label": "受到压制",
+          "meta": "立即换位或闪避"
+        },
+        "screenPulseKind": "damage_taken",
+        "screenPulseSeverity": "pressure",
+        "activeFxCount": 5,
+        "recentEvents": [
+          {
+            "type": "damage_taken",
+            "weaponId": null,
+            "label": "受到压制",
+            "severity": "pressure",
+            "danger": "pressure",
+            "source": "damage_taken",
+            "at": 0.377
+          }
+        ],
+        "supportedEvents": [
+          "shot_fired",
+          "player_hit",
+          "kill",
+          "environment_hit",
+          "near_miss",
+          "damage_taken",
+          "low_hp",
+          "round_transition"
+        ]
+      }
+    },
+    {
+      "name": "near-miss-warning",
+      "ok": true,
+      "failures": [],
+      "visualState": {
+        "density": "focus",
+        "danger": "warning",
+        "severity": "warning",
+        "foregroundSeverity": "warning",
+        "backgroundSeverity": null,
+        "persistentDanger": false,
+        "lastDangerSource": "near_miss",
+        "layerSeverities": {
+          "badge": "warning",
+          "feed": "warning",
+          "pulse": "warning",
+          "vignette": null,
+          "camera": "warning"
+        },
+        "activeLayers": {
+          "badge": true,
+          "feed": true,
+          "pulse": true,
+          "vignette": false,
+          "camera": true
+        },
+        "lowHpActive": false,
+        "shotConfirmKind": null,
+        "combatFeed": {
+          "kind": "near_miss",
+          "severity": "warning",
+          "label": "擦弹压迫",
+          "meta": "保持移动，不要贪枪"
+        },
+        "screenPulseKind": "near_miss",
+        "screenPulseSeverity": "warning",
+        "activeFxCount": 2,
+        "recentEvents": [
+          {
+            "type": "shot_fired",
+            "weaponId": "pistol",
+            "label": "手枪点射",
+            "severity": null,
+            "danger": null,
+            "source": null,
+            "at": 0.377
+          },
+          {
+            "type": "near_miss",
+            "weaponId": null,
+            "label": "擦弹压迫",
+            "severity": "warning",
+            "danger": "warning",
+            "source": "near_miss",
+            "at": 0.377
+          }
+        ],
+        "supportedEvents": [
+          "shot_fired",
+          "player_hit",
+          "kill",
+          "environment_hit",
+          "near_miss",
+          "damage_taken",
+          "low_hp",
+          "round_transition"
+        ]
+      }
+    },
+    {
+      "name": "low-hp-critical",
+      "ok": true,
+      "failures": [],
+      "visualState": {
+        "density": "focus",
+        "danger": "critical",
+        "severity": "critical",
+        "foregroundSeverity": null,
+        "backgroundSeverity": "critical",
+        "persistentDanger": true,
+        "lastDangerSource": "low_hp",
+        "layerSeverities": {
+          "badge": "critical",
+          "feed": null,
+          "pulse": null,
+          "vignette": "critical",
+          "camera": "critical"
+        },
+        "activeLayers": {
+          "badge": true,
+          "feed": false,
+          "pulse": false,
+          "vignette": true,
+          "camera": true
+        },
+        "lowHpActive": true,
+        "shotConfirmKind": null,
+        "combatFeed": null,
+        "screenPulseKind": null,
+        "screenPulseSeverity": null,
+        "activeFxCount": 2,
+        "recentEvents": [
+          {
+            "type": "low_hp",
+            "weaponId": null,
+            "label": "生命告急",
+            "severity": "critical",
+            "danger": "critical",
+            "source": "low_hp",
+            "at": 0.377
+          }
+        ],
+        "supportedEvents": [
+          "shot_fired",
+          "player_hit",
+          "kill",
+          "environment_hit",
+          "near_miss",
+          "damage_taken",
+          "low_hp",
+          "round_transition"
+        ]
+      }
+    },
+    {
+      "name": "heal-reset",
+      "ok": true,
+      "failures": [],
+      "visualState": {
+        "density": "focus",
+        "danger": "calm",
+        "severity": "calm",
+        "foregroundSeverity": null,
+        "backgroundSeverity": null,
+        "persistentDanger": false,
+        "lastDangerSource": null,
+        "layerSeverities": {
+          "badge": null,
+          "feed": null,
+          "pulse": null,
+          "vignette": null,
+          "camera": null
+        },
+        "activeLayers": {
+          "badge": false,
+          "feed": false,
+          "pulse": false,
+          "vignette": false,
+          "camera": false
+        },
+        "lowHpActive": false,
+        "shotConfirmKind": null,
+        "combatFeed": null,
+        "screenPulseKind": null,
+        "screenPulseSeverity": null,
+        "activeFxCount": 0,
+        "recentEvents": [
+          {
+            "type": "low_hp",
+            "weaponId": null,
+            "label": "生命告急",
+            "severity": "critical",
+            "danger": "critical",
+            "source": "low_hp",
+            "at": 7.061
+          }
+        ],
+        "supportedEvents": [
+          "shot_fired",
+          "player_hit",
+          "kill",
+          "environment_hit",
+          "near_miss",
+          "damage_taken",
+          "low_hp",
+          "round_transition"
+        ]
+      }
+    },
+    {
+      "name": "critical-plus-swing-overlap",
+      "ok": true,
+      "failures": [],
+      "visualState": {
+        "density": "focus",
+        "danger": "swing",
+        "severity": "swing",
+        "foregroundSeverity": "swing",
+        "backgroundSeverity": "critical",
+        "persistentDanger": true,
+        "lastDangerSource": "kill",
+        "layerSeverities": {
+          "badge": "critical",
+          "feed": "swing",
+          "pulse": "swing",
+          "vignette": "critical",
+          "camera": "swing"
+        },
+        "activeLayers": {
+          "badge": true,
+          "feed": true,
+          "pulse": true,
+          "vignette": true,
+          "camera": true
+        },
+        "lowHpActive": true,
+        "shotConfirmKind": "kill",
+        "combatFeed": {
+          "kind": "kill",
+          "severity": "swing",
+          "label": "终结确认",
+          "meta": "K.O."
+        },
+        "screenPulseKind": "kill",
+        "screenPulseSeverity": "swing",
+        "activeFxCount": 30,
+        "recentEvents": [
+          {
+            "type": "low_hp",
+            "weaponId": null,
+            "label": "生命告急",
+            "severity": "critical",
+            "danger": "critical",
+            "source": "low_hp",
+            "at": 8.45
+          },
+          {
+            "type": "round_transition",
+            "weaponId": null,
+            "label": "玩家 1 赢得本回合",
+            "severity": "swing",
+            "danger": "swing",
+            "source": "round_transition",
+            "at": 8.633
+          },
+          {
+            "type": "kill",
+            "weaponId": "pistol",
+            "label": "K.O.",
+            "severity": "swing",
+            "danger": "swing",
+            "source": "kill",
+            "at": 8.633
+          }
+        ],
+        "supportedEvents": [
+          "shot_fired",
+          "player_hit",
+          "kill",
+          "environment_hit",
+          "near_miss",
+          "damage_taken",
+          "low_hp",
+          "round_transition"
+        ]
+      }
+    },
+    {
+      "name": "deathmatch-compact-calm",
+      "ok": true,
+      "failures": [],
+      "visualState": {
+        "density": "compact",
+        "danger": "calm",
+        "severity": "calm",
+        "foregroundSeverity": null,
+        "backgroundSeverity": null,
+        "persistentDanger": false,
+        "lastDangerSource": null,
+        "layerSeverities": {
+          "badge": null,
+          "feed": null,
+          "pulse": null,
+          "vignette": null,
+          "camera": null
+        },
+        "activeLayers": {
+          "badge": false,
+          "feed": false,
+          "pulse": false,
+          "vignette": false,
+          "camera": false
+        },
+        "lowHpActive": false,
+        "shotConfirmKind": null,
+        "combatFeed": null,
+        "screenPulseKind": null,
+        "screenPulseSeverity": null,
+        "activeFxCount": 0,
+        "recentEvents": [],
+        "supportedEvents": [
+          "shot_fired",
+          "player_hit",
+          "kill",
+          "environment_hit",
+          "near_miss",
+          "damage_taken",
+          "low_hp",
+          "round_transition"
+        ]
+      }
+    },
+    {
+      "name": "restart-menu-reset",
+      "ok": true,
+      "failures": [],
+      "visualState": {
+        "density": "focus",
+        "danger": "calm",
+        "severity": "calm",
+        "foregroundSeverity": null,
+        "backgroundSeverity": null,
+        "persistentDanger": false,
+        "lastDangerSource": null,
+        "layerSeverities": {
+          "badge": null,
+          "feed": null,
+          "pulse": null,
+          "vignette": null,
+          "camera": null
+        },
+        "activeLayers": {
+          "badge": false,
+          "feed": false,
+          "pulse": false,
+          "vignette": false,
+          "camera": false
+        },
+        "lowHpActive": false,
+        "shotConfirmKind": null,
+        "combatFeed": null,
+        "screenPulseKind": null,
+        "screenPulseSeverity": null,
+        "activeFxCount": 1,
+        "recentEvents": [],
+        "supportedEvents": [
+          "shot_fired",
+          "player_hit",
+          "kill",
+          "environment_hit",
+          "near_miss",
+          "damage_taken",
+          "low_hp",
+          "round_transition"
+        ]
+      }
+    }
+  ],
+  "runtimeErrors": []
+}
