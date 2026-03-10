@@ -649,6 +649,12 @@
       box-shadow: 0 0 28px rgba(255, 138, 61, 0.28);
     }
 
+    #shotConfirm[data-kind="headshot"] {
+      color: #ff4444;
+      box-shadow: 0 0 36px rgba(255, 68, 68, 0.4);
+      text-shadow: 0 0 12px rgba(255, 68, 68, 0.6);
+    }
+
     #shotConfirm[data-kind="environment_hit"] {
       color: #d9e4ef;
       box-shadow: 0 0 18px rgba(111, 122, 134, 0.18);
@@ -1123,6 +1129,10 @@
       background: radial-gradient(circle at center, rgba(255, 138, 61, 0.34), rgba(255, 138, 61, 0) 58%);
     }
 
+    #screenPulse[data-kind="headshot"] {
+      background: radial-gradient(circle at center, rgba(255, 68, 68, 0.42), rgba(255, 68, 68, 0) 58%);
+    }
+
     #screenPulse[data-kind="shot_fired"] {
       background: radial-gradient(circle at center, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 48%);
     }
@@ -1213,6 +1223,10 @@
     #combatFeed[data-kind="round_transition"] #combatFeedLabel,
     #combatFeed[data-kind="kill"] #combatFeedLabel {
       color: #ffe3a6;
+    }
+
+    #combatFeed[data-kind="headshot"] #combatFeedLabel {
+      color: #ff6b6b;
     }
 
     #combatFeed[data-severity="pressure"] #combatFeedLabel { color: #ffe0c0; }
@@ -1634,7 +1648,8 @@
 	      player: {
 	        height: 1.75,
 	        radius: 0.35,
-	        hurtRadius: 0.42 // Larger hitbox makes shooting easier
+	        hurtRadius: 0.42, // 受击判定半径
+	        headRadius: 0.15  // 爆头判定半径（中心区域）
 	      },
       match: {
         totalTime: 105,
@@ -4567,8 +4582,8 @@
       const fadeIn = THREE.MathUtils.clamp(progress / 0.16, 0, 1);
       const fadeOut = THREE.MathUtils.clamp(fx.shotConfirmTimer / Math.max(0.0001, fx.shotConfirmMaxTimer * 0.82), 0, 1);
       const opacity = Math.min(fadeIn, fadeOut) * fx.shotConfirmOpacity;
-      const scaleStart = fx.shotConfirmKind === 'kill' ? 0.88 : 0.82;
-      const scaleEnd = fx.shotConfirmKind === 'kill' ? 1.12 : 0.98;
+      const scaleStart = (fx.shotConfirmKind === 'kill' || fx.shotConfirmKind === 'headshot') ? 0.88 : 0.82;
+      const scaleEnd = (fx.shotConfirmKind === 'kill' || fx.shotConfirmKind === 'headshot') ? 1.12 : 0.98;
       const scale = THREE.MathUtils.lerp(scaleStart, scaleEnd, Math.sin(Math.min(1, progress) * Math.PI * 0.75));
       const offsetY = getHudVisualProfile().shotConfirmOffsetY || 0;
 
@@ -4631,9 +4646,9 @@
         return;
       }
 
-      if (event.type === 'player_hit' || event.type === 'kill' || event.type === 'environment_hit') {
+      if (event.type === 'player_hit' || event.type === 'kill' || event.type === 'headshot' || event.type === 'environment_hit') {
         if (!isLocalPlayerShot || !config) return;
-        const resultSeverity = event.type === 'kill' ? (severity || 'swing') : 'calm';
+        const resultSeverity = (event.type === 'kill' || event.type === 'headshot') ? (severity || 'swing') : 'calm';
         const resultSeverityConfig = resultSeverity !== 'calm'
           ? getDangerSeverityConfig(modeId, resultSeverity)
           : null;
@@ -4661,14 +4676,14 @@
           : true;
         const canShowCalmForeground = resultSeverity !== 'calm' || !fx.foregroundSeverity;
         if (canShowCalmForeground) {
-          triggerScreenPulse(event.type, event.type === 'kill' ? 1.1 : 0.95, {
+          triggerScreenPulse(event.type, (event.type === 'kill' || event.type === 'headshot') ? 1.1 : 0.95, {
             severity: foregroundAccepted ? resultSeverity : 'calm',
             severityProfile: foregroundAccepted ? resultSeverityConfig : null,
             duration: config.duration
           });
           setCombatFeed(
             event.type,
-            event.type === 'kill' ? '终结确认' : event.type === 'player_hit' ? '命中确认' : '命中环境',
+            event.type === 'headshot' ? '爆头击杀' : event.type === 'kill' ? '终结确认' : event.type === 'player_hit' ? '命中确认' : '命中环境',
             config.label,
             config.duration * 1.5,
             {
@@ -4677,7 +4692,7 @@
             }
           );
         }
-        if (event.type === 'kill') {
+        if (event.type === 'kill' || event.type === 'headshot') {
           hideBanner({ suppressOnly: false });
         }
         pushVisualEvent(event.type, {
@@ -4689,7 +4704,7 @@
         const impactKind = event.impactKind || (event.type === 'environment_hit' ? 'cover' : 'player');
         spawnShotImpact(event.impactPosition, impactKind, {
           targetTeam: event.targetTeam,
-          color: event.type === 'kill' ? 0xffa654 : null
+          color: event.type === 'headshot' ? 0xff4444 : event.type === 'kill' ? 0xffa654 : null
         });
         return;
       }
@@ -4869,22 +4884,46 @@
         hitType,
         hit,
         shotEnd,
-        missCandidate
+        missCandidate,
+        isHeadshot: false // 爆头标记在 commitShotPellet 中判定
       };
     }
 
     function commitShotPellet(attacker, weapon, isAI, aiTuning, origin, pelletResult, shotResult, knockState) {
       if (pelletResult.hitType === 'player') {
+        const target = pelletResult.hit;
         const damage = weapon.damage * (isAI ? (aiTuning?.aiDamageMul ?? 1) : 1);
-        const didKill = applyDamage(pelletResult.hit, damage, attacker.team, attacker, weapon, origin, pelletResult.shotEnd);
+
+        // 爆头判定：计算命中点与目标中心的距离
+        const hitPoint = pelletResult.shotEnd;
+        const dx = hitPoint.x - target.position.x;
+        const dz = hitPoint.z - target.position.z;
+        const hitDist = Math.sqrt(dx * dx + dz * dz);
+        const isHeadshot = hitDist < CONFIG.player.headRadius;
+
+        let didKill;
+        if (isHeadshot) {
+          // 爆头直接击杀
+          didKill = applyDamage(target, target.hp + 1, attacker.team, attacker, weapon, origin, pelletResult.shotEnd);
+        } else {
+          didKill = applyDamage(target, damage, attacker.team, attacker, weapon, origin, pelletResult.shotEnd);
+        }
+
         shotResult.didAnyHit = true;
         shotResult.didPlayerHit = true;
         shotResult.impactKind = shotResult.impactKind || 'player';
-        shotResult.targetTeam = shotResult.targetTeam || pelletResult.hit.team;
+        shotResult.targetTeam = shotResult.targetTeam || target.team;
         shotResult.hitPosition = shotResult.hitPosition || pelletResult.shotEnd.clone();
+        if (isHeadshot) {
+          shotResult.didHeadshot = true;
+          // 爆头弹出提示
+          const popupPos = target.position.clone();
+          popupPos.y = 2.5;
+          spawnPopup('爆头！', popupPos, 'close', 1.0);
+        }
         if (didKill) shotResult.didKill = true;
         if (!knockState.applied) {
-          applyKnockback(pelletResult.hit, attacker.position, weapon.knockback);
+          applyKnockback(target, attacker.position, weapon.knockback);
           knockState.applied = true;
         }
         return;
@@ -4918,7 +4957,9 @@
 
     function finalizeShotResult(shotResult) {
       let outcome = 'miss';
-      if (shotResult.didKill) {
+      if (shotResult.didHeadshot) {
+        outcome = 'headshot';
+      } else if (shotResult.didKill) {
         outcome = 'kill';
       } else if (shotResult.didPlayerHit) {
         outcome = 'player_hit';

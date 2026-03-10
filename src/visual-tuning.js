@@ -2,6 +2,7 @@ export const visualEventTypes = [
   'shot_fired',
   'player_hit',
   'kill',
+  'headshot',
   'environment_hit',
   'near_miss',
   'damage_taken',
@@ -20,6 +21,7 @@ export const eventSeverityMap = {
   shot_fired: null,
   player_hit: null,
   kill: 'swing',
+  headshot: 'swing',
   environment_hit: null,
   near_miss: 'warning',
   damage_taken: 'pressure',
@@ -122,6 +124,19 @@ export const visualTuning = {
         label: 'K.O.',
         impactCount: 12
       },
+      headshot: {
+        duration: 0.32,
+        opacity: 1.0,
+        pulse: 1.3,
+        hitstop: 0.12,
+        flash: 0.12,
+        shakeTime: 0.22,
+        shakeIntensity: 0.16,
+        throttle: 0,
+        glyph: '💀',
+        label: '爆头击杀',
+        impactCount: 18
+      },
       environment_hit: {
         duration: 0.1,
         opacity: 0.78,
@@ -175,6 +190,19 @@ export const visualTuning = {
         label: 'K.O.',
         impactCount: 10
       },
+      headshot: {
+        duration: 0.26,
+        opacity: 1.0,
+        pulse: 1.1,
+        hitstop: 0.09,
+        flash: 0.09,
+        shakeTime: 0.14,
+        shakeIntensity: 0.1,
+        throttle: 0,
+        glyph: '💀',
+        label: '爆头击杀',
+        impactCount: 14
+      },
       environment_hit: {
         duration: 0.08,
         opacity: 0.66,
@@ -227,6 +255,19 @@ export const visualTuning = {
         glyph: '✹',
         label: 'K.O.',
         impactCount: 16
+      },
+      headshot: {
+        duration: 0.36,
+        opacity: 1.0,
+        pulse: 1.4,
+        hitstop: 0.14,
+        flash: 0.14,
+        shakeTime: 0.26,
+        shakeIntensity: 0.2,
+        throttle: 0,
+        glyph: '💀',
+        label: '爆头击杀',
+        impactCount: 22
       },
       environment_hit: {
         duration: 0.12,
@@ -337,6 +378,19 @@ export const visualTuning = {
         label: 'K.O.',
         impactCount: 10
       },
+      headshot: {
+        duration: 0.26,
+        opacity: 1.0,
+        pulse: 1.1,
+        hitstop: 0.09,
+        flash: 0.09,
+        shakeTime: 0.14,
+        shakeIntensity: 0.1,
+        throttle: 0,
+        glyph: '💀',
+        label: '爆头击杀',
+        impactCount: 14
+      },
       environment_hit: {
         duration: 0.08,
         opacity: 0.68,
@@ -390,6 +444,19 @@ export const visualTuning = {
         label: 'K.O.',
         impactCount: 8
       },
+      headshot: {
+        duration: 0.22,
+        opacity: 1.0,
+        pulse: 0.98,
+        hitstop: 0.07,
+        flash: 0.07,
+        shakeTime: 0.1,
+        shakeIntensity: 0.072,
+        throttle: 0,
+        glyph: '💀',
+        label: '爆头击杀',
+        impactCount: 12
+      },
       environment_hit: {
         duration: 0.06,
         opacity: 0.5,
@@ -442,6 +509,19 @@ export const visualTuning = {
         glyph: '✹',
         label: 'K.O.',
         impactCount: 14
+      },
+      headshot: {
+        duration: 0.3,
+        opacity: 1.0,
+        pulse: 1.3,
+        hitstop: 0.12,
+        flash: 0.12,
+        shakeTime: 0.2,
+        shakeIntensity: 0.14,
+        throttle: 0,
+        glyph: '💀',
+        label: '爆头击杀',
+        impactCount: 20
       },
       environment_hit: {
         duration: 0.1,
@@ -817,6 +897,7 @@ for (const [modeId, modeConfig] of Object.entries(visualTuning)) {
   for (const weaponId of ['pistol', 'smg', 'shotgun']) {
     Object.assign(modeConfig[weaponId].shot_fired, shotFiredProfiles[modeId][weaponId]);
     modeConfig[weaponId].kill.severity = eventSeverityMap.kill;
+    modeConfig[weaponId].headshot.severity = eventSeverityMap.headshot;
   }
 }
 
