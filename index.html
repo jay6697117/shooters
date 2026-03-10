@@ -3414,12 +3414,15 @@
       menuOverlay.classList.toggle('visible', mode === 'menu');
       pauseOverlay.classList.toggle('visible', mode === 'paused');
       matchOverlay.classList.toggle('visible', mode === 'matchOver');
+      if (mode === 'playing') {
+        hideBanner({ suppressOnly: false });
+      }
       if (mode === 'menu' || mode === 'matchOver') {
         clearShotFeedback();
         resetShotFeedbackHistory();
       }
       if (mode === 'menu') {
-        bannerEl.classList.remove('show');
+        hideBanner({ suppressOnly: false });
         suddenDeathEl.classList.remove('show');
       }
       syncHudVisualState();
@@ -6335,7 +6338,12 @@
     }
 
     function showBanner(text, options = {}) {
+      if (bannerTimeoutId) {
+        clearTimeout(bannerTimeoutId);
+        bannerTimeoutId = null;
+      }
       bannerEl.textContent = text;
+      bannerEl.dataset.suppressed = 'false';
       bannerEl.classList.add('show');
       if (!options.skipFeedback) {
         presentCombatFeedback({
@@ -6345,7 +6353,24 @@
           duration: options.duration
         });
       }
-      setTimeout(() => bannerEl.classList.remove('show'), 1000);
+      bannerTimeoutId = setTimeout(() => {
+        bannerEl.classList.remove('show');
+        bannerEl.dataset.suppressed = 'false';
+        bannerTimeoutId = null;
+      }, 1000);
+    }
+
+    function hideBanner(options = {}) {
+      if (bannerTimeoutId) {
+        clearTimeout(bannerTimeoutId);
+        bannerTimeoutId = null;
+      }
+      if (options.suppressOnly) {
+        bannerEl.dataset.suppressed = 'true';
+        return;
+      }
+      bannerEl.dataset.suppressed = 'false';
+      bannerEl.classList.remove('show');
     }
 
     function spawnPopup(text, worldPos, kind = 'close', duration = 0.6) {
