@@ -119,3 +119,18 @@ Original prompt: PLEASE IMPLEMENT THIS PLAN for the v1.0 beginner-friendly diffi
   - `node scripts/visual-system.browser.test.mjs --url http://127.0.0.1:4173/index.html --out-dir output/visual-regression-round4-green4` passed all 8 scenarios with `bannerVisible=false` and `combatFeed.emphasis='hero'` in `critical-plus-swing-overlap`.
   - `runtimeErrors` in `output/visual-regression-round4-green4/results.json` remained empty.
   - Ran develop-web-game client against http://127.0.0.1:4173/index.html and reviewed `output/visual-pass-client-round4/shot-0.png` + `state-0.json`; no `errors-0.json` was produced.
+
+- 2026-03-10 visual pass round 5:
+- Kept runtime HUD behavior unchanged and focused only on browser regression fidelity for `critical-plus-swing-overlap`.
+- Expanded `scripts/visual-system.contract.test.mjs` so the regression harness must expose `critical-plus-swing-peak.png`, `peakFeedOpacity`, `peakScreenshot`, and `peakFrameOffsetMs`.
+- Reworked the overlap path in `scripts/visual-system.browser.test.mjs` from single-run capture to replay-based peak sampling: each candidate offset now rebuilds the same overlap setup, inspects `visualState` plus live `#combatFeed` DOM opacity/transform/emphasis, and selects the highest-opacity hero frame that still preserves `foreground=swing`, `background=critical`, and `bannerVisible=false`.
+- Browser regression output now keeps two artifacts for overlap:
+  - `critical-plus-swing.png` as the full-scene context frame.
+  - `critical-plus-swing-peak.png` as a dedicated hero-feed peak capture, produced from a peak-frame clone of `#combatFeed` so the artifact stays readable even when the in-scene fixed-position element is hard to rasterize reliably.
+- `output/visual-regression-round5/results.json` now records overlap-specific metadata: `peakFeedOpacity`, `peakScreenshot`, and `peakFrameOffsetMs`.
+- Verification results:
+  - `node --test scripts/visual-system.contract.test.mjs` passed after the round-five regression contract expansion.
+  - `node scripts/visual-system.browser.test.mjs --url http://127.0.0.1:4173/index.html --out-dir output/visual-regression-round5` passed all 8 scenarios.
+  - `critical-plus-swing-overlap` reported `peakFeedOpacity=0.9012`, `peakScreenshot='critical-plus-swing-peak.png'`, and `peakFrameOffsetMs=0`.
+  - `runtimeErrors` remained empty in `output/visual-regression-round5/results.json`.
+  - Ran develop-web-game client against http://127.0.0.1:4173/index.html and reviewed `output/visual-pass-client-round5/shot-0.png` + `state-0.json`; no `errors-0.json` was produced.

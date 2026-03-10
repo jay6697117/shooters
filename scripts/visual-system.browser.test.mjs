@@ -355,6 +355,100 @@ async function main() {
     }
   ));
 
+  results.push(await runScenario(
+    'topdown-pistol-shot-visual',
+    () => {
+      const api = window.phase21TestApi;
+      api.startMatch('duel', { forcePlaying: true });
+      api.setViewMode('topdown');
+      api.setPlayerWeapon('pistol');
+      return api.firePlayerAtTeam('p2');
+    },
+    (snapshot, failures) => {
+      const visual = summarizeVisualState(snapshot);
+      expect(snapshot.viewMode === 'topdown', 'topdown-pistol-shot-visual should stay in topdown mode', failures);
+      expect(visual.shotFx?.lastViewMode === 'topdown', 'topdown-pistol-shot-visual lastViewMode should be topdown', failures);
+      expect(visual.shotFx?.lastWeaponId === 'pistol', 'topdown-pistol-shot-visual lastWeaponId should be pistol', failures);
+      expect((visual.shotFx?.lastStreakLength || 0) > 0.4, 'topdown-pistol-shot-visual should emit a visible streak', failures);
+      expect((visual.shotFx?.lastStreakLength || 0) < 9, 'topdown-pistol-shot-visual streak should not span the full arena', failures);
+      expect((visual.shotFx?.activeStreaks || 0) >= 1, 'topdown-pistol-shot-visual should keep at least one active streak', failures);
+    }
+  ));
+
+  results.push(await runScenario(
+    'fps-pistol-shot-visual',
+    () => {
+      const api = window.phase21TestApi;
+      api.startMatch('duel', { forcePlaying: true });
+      api.setViewMode('fps');
+      api.setPlayerWeapon('pistol');
+      return api.firePlayerAtTeam('p2');
+    },
+    (snapshot, failures) => {
+      const visual = summarizeVisualState(snapshot);
+      expect(snapshot.viewMode === 'fps', 'fps-pistol-shot-visual should stay in fps mode', failures);
+      expect(visual.shotFx?.lastViewMode === 'fps', 'fps-pistol-shot-visual lastViewMode should be fps', failures);
+      expect((visual.shotFx?.lastStreakLength || 0) > 0.2, 'fps-pistol-shot-visual should emit a short streak', failures);
+      expect((visual.shotFx?.lastStreakLength || 0) < 4.5, 'fps-pistol-shot-visual streak should stay close to the muzzle', failures);
+      expect((visual.shotFx?.lastTravelHint || 0) <= 1, 'fps-pistol-shot-visual should report travel-hint state', failures);
+    }
+  ));
+
+  results.push(await runScenario(
+    'smg-density-shot-visual',
+    () => {
+      const api = window.phase21TestApi;
+      api.startMatch('deathmatch', { forcePlaying: true });
+      api.setViewMode('topdown');
+      api.setPlayerWeapon('smg');
+      for (let i = 0; i < 4; i += 1) {
+        api.firePlayerAtTeam('p2', { resetFeedback: i === 0 });
+        api.advance(16);
+      }
+      return api.snapshot();
+    },
+    (snapshot, failures) => {
+      const visual = summarizeVisualState(snapshot);
+      expect(visual.shotFx?.lastWeaponId === 'smg', 'smg-density-shot-visual lastWeaponId should be smg', failures);
+      expect((visual.shotFx?.sampleEvery || 0) >= 2, 'smg-density-shot-visual should use sampling for streak emission', failures);
+      expect((visual.shotFx?.sampleSkipped || 0) >= 1, 'smg-density-shot-visual should skip some rapid-fire streaks', failures);
+      expect((visual.shotFx?.activeStreaks || 0) <= 3, 'smg-density-shot-visual should avoid screen-filling streak spam', failures);
+    }
+  ));
+
+  results.push(await runScenario(
+    'barrel-impact-shot-visual',
+    () => {
+      const api = window.phase21TestApi;
+      api.startMatch('duel', { forcePlaying: true });
+      api.setViewMode('topdown');
+      return api.firePlayerAtBarrel(0);
+    },
+    (snapshot, failures) => {
+      const visual = summarizeVisualState(snapshot);
+      expect(visual.shotFx?.lastImpactKind === 'barrel', 'barrel-impact-shot-visual lastImpactKind should be barrel', failures);
+      expect(visual.shotFx?.lastImpactStyle === 'barrel', 'barrel-impact-shot-visual lastImpactStyle should use barrel profile', failures);
+      expect((visual.shotFx?.activeImpactFlashes || 0) >= 1, 'barrel-impact-shot-visual should emit an impact flash', failures);
+    }
+  ));
+
+  results.push(await runScenario(
+    'near-miss-shot-visual',
+    () => {
+      const api = window.phase21TestApi;
+      api.startMatch('duel', { forcePlaying: true });
+      api.setViewMode('fps');
+      return api.firePlayerNearMiss('p2');
+    },
+    (snapshot, failures) => {
+      const visual = summarizeVisualState(snapshot);
+      expect(visual.shotFx?.lastImpactKind === 'near_miss', 'near-miss-shot-visual lastImpactKind should be near_miss', failures);
+      expect(visual.shotFx?.lastImpactStyle === 'near_miss', 'near-miss-shot-visual should use near_miss impact style', failures);
+      expect(visual.shotFx?.lastViewMode === 'fps', 'near-miss-shot-visual should preserve fps view mode', failures);
+      expect((visual.shotFx?.activeImpactFlashes || 0) >= 1, 'near-miss-shot-visual should emit a near-miss flash', failures);
+    }
+  ));
+
   results.push(await runCriticalSwingOverlapScenario());
 
   results.push(await runScenario(

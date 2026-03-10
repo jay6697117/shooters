@@ -35,14 +35,20 @@ test('visual system contract exposes unified tuning and runtime seams', async ()
   assert.ok(Array.isArray(visualModule.visualEventTypes), 'visualEventTypes must be exported');
   assert.deepEqual(visualModule.visualEventTypes, REQUIRED_EVENTS);
   assert.ok(visualModule.visualTuning, 'visualTuning must be exported');
+  assert.ok(visualModule.shotViewProfiles, 'shotViewProfiles must be exported');
+  assert.ok(visualModule.impactVisualProfiles, 'impactVisualProfiles must be exported');
   assert.ok(Array.isArray(visualModule.dangerSeverityOrder), 'dangerSeverityOrder must be exported');
   assert.deepEqual(visualModule.dangerSeverityOrder, REQUIRED_SEVERITIES);
   assert.ok(visualModule.dangerSeverityMatrix, 'dangerSeverityMatrix must be exported');
   assert.ok(visualModule.eventSeverityMap, 'eventSeverityMap must be exported');
+  assert.equal(typeof visualModule.getShotViewProfile, 'function', 'getShotViewProfile must be exported');
+  assert.equal(typeof visualModule.getImpactVisualProfile, 'function', 'getImpactVisualProfile must be exported');
 
   for (const modeId of ['duel', 'deathmatch']) {
     assert.ok(visualModule.visualTuning[modeId], `visualTuning.${modeId} must exist`);
     assert.ok(visualModule.dangerSeverityMatrix[modeId], `dangerSeverityMatrix.${modeId} must exist`);
+    assert.ok(visualModule.shotViewProfiles[modeId], `shotViewProfiles.${modeId} must exist`);
+    assert.ok(visualModule.impactVisualProfiles[modeId], `impactVisualProfiles.${modeId} must exist`);
     for (const severity of REQUIRED_SEVERITIES) {
       const severityProfile = visualModule.dangerSeverityMatrix[modeId][severity];
       assert.ok(severityProfile, `dangerSeverityMatrix.${modeId}.${severity} must exist`);
@@ -73,6 +79,38 @@ test('visual system contract exposes unified tuning and runtime seams', async ()
       for (const eventType of ['shot_fired', 'player_hit', 'kill', 'environment_hit']) {
         assert.ok(profile[eventType], `visualTuning.${modeId}.${weaponId}.${eventType} must exist`);
       }
+      for (const key of [
+        'streakLength',
+        'streakWidth',
+        'travelHintLength',
+        'travelHintOpacity',
+        'sampleEvery'
+      ]) {
+        assert.ok(
+          Object.hasOwn(profile.shot_fired, key),
+          `visualTuning.${modeId}.${weaponId}.shot_fired.${key} must exist`
+        );
+      }
+    }
+    for (const viewMode of ['topdown', 'fps']) {
+      const shotViewProfile = visualModule.shotViewProfiles[modeId][viewMode];
+      assert.ok(shotViewProfile, `shotViewProfiles.${modeId}.${viewMode} must exist`);
+      for (const key of ['lengthMul', 'widthMul', 'opacityMul', 'travelHintMul', 'fadeMul']) {
+        assert.ok(
+          Object.hasOwn(shotViewProfile, key),
+          `shotViewProfiles.${modeId}.${viewMode}.${key} must exist`
+        );
+      }
+    }
+    for (const impactKind of ['player', 'cover', 'barrel', 'near_miss']) {
+      const impactProfile = visualModule.impactVisualProfiles[modeId][impactKind];
+      assert.ok(impactProfile, `impactVisualProfiles.${modeId}.${impactKind} must exist`);
+      for (const key of ['flashSize', 'flashLife', 'sparkCount', 'sparkSpeed']) {
+        assert.ok(
+          Object.hasOwn(impactProfile, key),
+          `impactVisualProfiles.${modeId}.${impactKind}.${key} must exist`
+        );
+      }
     }
     const globalProfile = visualModule.visualTuning[modeId].global;
     assert.ok(globalProfile, `visualTuning.${modeId}.global must exist`);
@@ -100,6 +138,8 @@ test('visual system contract exposes unified tuning and runtime seams', async ()
   assert.match(html, /backgroundSeverity\s*:/, 'visualState must expose backgroundSeverity');
   assert.match(html, /layerSeverities\s*:/, 'visualState must expose layerSeverities');
   assert.match(html, /activeLayers\s*:/, 'visualState must expose activeLayers');
+  assert.match(html, /shotFx\s*:/, 'visualState must expose shotFx metrics');
+  assert.match(html, /viewMode\s*:/, 'render_game_to_text must expose current viewMode');
   assert.match(html, /window\.advanceTime\s*=/, 'index.html must expose window.advanceTime for deterministic stepping');
   assert.match(
     html,
@@ -127,5 +167,30 @@ test('visual system contract exposes unified tuning and runtime seams', async ()
     browserTestSource,
     /peakFrameOffsetMs/,
     'browser regression must record peakFrameOffsetMs metadata'
+  );
+  assert.match(
+    browserTestSource,
+    /topdown-pistol-shot-visual/,
+    'browser regression must cover topdown shot visuals'
+  );
+  assert.match(
+    browserTestSource,
+    /fps-pistol-shot-visual/,
+    'browser regression must cover fps shot visuals'
+  );
+  assert.match(
+    browserTestSource,
+    /smg-density-shot-visual/,
+    'browser regression must cover smg shot-visual density'
+  );
+  assert.match(
+    browserTestSource,
+    /barrel-impact-shot-visual/,
+    'browser regression must cover barrel impact shot visuals'
+  );
+  assert.match(
+    browserTestSource,
+    /near-miss-shot-visual/,
+    'browser regression must cover near-miss shot visuals'
   );
 });

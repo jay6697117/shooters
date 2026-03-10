@@ -460,6 +460,151 @@ export const visualTuning = {
   }
 };
 
+export const shotViewProfiles = {
+  duel: {
+    topdown: {
+      lengthMul: 1.08,
+      widthMul: 1.04,
+      opacityMul: 1.0,
+      travelHintMul: 1.0,
+      fadeMul: 1.0
+    },
+    fps: {
+      lengthMul: 0.46,
+      widthMul: 0.82,
+      opacityMul: 0.86,
+      travelHintMul: 0.42,
+      fadeMul: 0.88
+    }
+  },
+  deathmatch: {
+    topdown: {
+      lengthMul: 0.96,
+      widthMul: 0.94,
+      opacityMul: 0.9,
+      travelHintMul: 0.8,
+      fadeMul: 0.94
+    },
+    fps: {
+      lengthMul: 0.4,
+      widthMul: 0.76,
+      opacityMul: 0.78,
+      travelHintMul: 0.34,
+      fadeMul: 0.84
+    }
+  }
+};
+
+export const impactVisualProfiles = {
+  duel: {
+    player: {
+      flashSize: 0.34,
+      flashLife: 0.13,
+      sparkCount: 8,
+      sparkSpeed: 3.6
+    },
+    cover: {
+      flashSize: 0.24,
+      flashLife: 0.1,
+      sparkCount: 5,
+      sparkSpeed: 2.5
+    },
+    barrel: {
+      flashSize: 0.3,
+      flashLife: 0.12,
+      sparkCount: 6,
+      sparkSpeed: 3.0
+    },
+    near_miss: {
+      flashSize: 0.28,
+      flashLife: 0.18,
+      sparkCount: 4,
+      sparkSpeed: 2.2
+    }
+  },
+  deathmatch: {
+    player: {
+      flashSize: 0.28,
+      flashLife: 0.11,
+      sparkCount: 6,
+      sparkSpeed: 3.0
+    },
+    cover: {
+      flashSize: 0.2,
+      flashLife: 0.08,
+      sparkCount: 4,
+      sparkSpeed: 2.0
+    },
+    barrel: {
+      flashSize: 0.26,
+      flashLife: 0.1,
+      sparkCount: 5,
+      sparkSpeed: 2.6
+    },
+    near_miss: {
+      flashSize: 0.22,
+      flashLife: 0.14,
+      sparkCount: 3,
+      sparkSpeed: 1.8
+    }
+  }
+};
+
+const shotFiredProfiles = {
+  duel: {
+    pistol: {
+      streakLength: 4.6,
+      streakWidth: 0.064,
+      travelHintLength: 1.35,
+      travelHintOpacity: 0.18,
+      sampleEvery: 1,
+      maxStreaksPerShot: 1
+    },
+    smg: {
+      streakLength: 3.2,
+      streakWidth: 0.048,
+      travelHintLength: 0.7,
+      travelHintOpacity: 0.11,
+      sampleEvery: 2,
+      maxStreaksPerShot: 1
+    },
+    shotgun: {
+      streakLength: 2.7,
+      streakWidth: 0.086,
+      travelHintLength: 1.05,
+      travelHintOpacity: 0.14,
+      sampleEvery: 1,
+      maxStreaksPerShot: 2
+    }
+  },
+  deathmatch: {
+    pistol: {
+      streakLength: 3.8,
+      streakWidth: 0.056,
+      travelHintLength: 1.1,
+      travelHintOpacity: 0.14,
+      sampleEvery: 1,
+      maxStreaksPerShot: 1
+    },
+    smg: {
+      streakLength: 2.6,
+      streakWidth: 0.042,
+      travelHintLength: 0.55,
+      travelHintOpacity: 0.08,
+      sampleEvery: 3,
+      maxStreaksPerShot: 1
+    },
+    shotgun: {
+      streakLength: 2.2,
+      streakWidth: 0.078,
+      travelHintLength: 0.9,
+      travelHintOpacity: 0.12,
+      sampleEvery: 1,
+      maxStreaksPerShot: 2
+    }
+  }
+};
+
 export const dangerSeverityMatrix = {
   duel: {
     pressure: {
@@ -666,7 +811,11 @@ for (const modeConfig of Object.values(visualTuning)) {
   modeConfig.global.damage_taken.severity = eventSeverityMap.damage_taken;
   modeConfig.global.low_hp.severity = eventSeverityMap.low_hp;
   modeConfig.global.round_transition.severity = eventSeverityMap.round_transition;
+}
+
+for (const [modeId, modeConfig] of Object.entries(visualTuning)) {
   for (const weaponId of ['pistol', 'smg', 'shotgun']) {
+    Object.assign(modeConfig[weaponId].shot_fired, shotFiredProfiles[modeId][weaponId]);
     modeConfig[weaponId].kill.severity = eventSeverityMap.kill;
   }
 }
@@ -682,6 +831,18 @@ export function getGlobalVisualProfile(modeId) {
 export function getWeaponVisualProfile(modeId, weaponId) {
   const modeProfile = visualTuning[getVisualModeKey(modeId)] || visualTuning.duel;
   return modeProfile[weaponId] || modeProfile.pistol;
+}
+
+export function getShotViewProfile(modeId, viewMode) {
+  const modeKey = getVisualModeKey(modeId);
+  const nextViewMode = viewMode === 'fps' ? 'fps' : 'topdown';
+  return shotViewProfiles[modeKey]?.[nextViewMode] || shotViewProfiles.duel.topdown;
+}
+
+export function getImpactVisualProfile(modeId, impactKind) {
+  const modeKey = getVisualModeKey(modeId);
+  const nextImpactKind = impactKind || 'player';
+  return impactVisualProfiles[modeKey]?.[nextImpactKind] || impactVisualProfiles.duel.player;
 }
 
 export function resolveEventSeverity(eventType) {
