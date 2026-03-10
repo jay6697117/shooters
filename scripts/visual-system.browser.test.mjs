@@ -45,12 +45,18 @@ function summarizeVisualState(snapshot) {
 }
 
 function scenarioResult(name, snapshot, failures) {
-  return {
+  const result = {
     name,
     ok: failures.length === 0,
     failures,
     visualState: summarizeVisualState(snapshot)
   };
+  for (const key of ['peakFeedOpacity', 'peakScreenshot', 'peakFrameOffsetMs']) {
+    if (snapshot && Object.hasOwn(snapshot, key)) {
+      result[key] = snapshot[key];
+    }
+  }
+  return result;
 }
 
 async function main() {
@@ -101,6 +107,159 @@ async function main() {
       failures.push(error instanceof Error ? error.message : String(error));
     }
     return scenarioResult(name, snapshot, failures);
+  };
+
+  const sampleCriticalSwingOverlapFrame = async (offsetMs = 0) => {
+    return page.evaluate((sampleOffsetMs) => {
+      const api = window.phase21TestApi;
+      api.startMatch('duel', { forcePlaying: true });
+      api.setEntityHp('p1', 20);
+      api.advance(180);
+      api.setEntityHp('p2', 10);
+      api.firePlayerAtTeam('p2', { resetFeedback: false });
+      api.advance(96);
+      for (let timeoutId = 1; timeoutId < 1000; timeoutId += 1) {
+        clearTimeout(timeoutId);
+      }
+      const banner = document.getElementById('banner');
+      if (banner) {
+        banner.classList.remove('show');
+        banner.dataset.suppressed = 'true';
+      }
+      api.advance(16);
+      if (sampleOffsetMs > 0) {
+        api.advance(sampleOffsetMs);
+      }
+      const snapshot = api.snapshot();
+      const combatFeed = document.getElementById('combatFeed');
+      const styles = combatFeed ? window.getComputedStyle(combatFeed) : null;
+      return {
+        offsetMs: sampleOffsetMs,
+        snapshot,
+        feed: combatFeed && styles ? {
+          opacity: Number(styles.opacity || 0),
+          transform: styles.transform || '',
+          emphasis: combatFeed.dataset.emphasis || 'standard',
+          rect: (() => {
+            const rect = combatFeed.getBoundingClientRect();
+            return {
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height
+            };
+          })()
+        } : {
+          opacity: 0,
+          transform: '',
+          emphasis: 'standard',
+          rect: null
+        }
+      };
+    }, offsetMs);
+  };
+
+  const runCriticalSwingOverlapScenario = async () => {
+    await sampleCriticalSwingOverlapFrame(0);
+    await page.screenshot({
+      path: path.join(args.outDir, 'critical-plus-swing.png'),
+      fullPage: false,
+      type: 'png'
+    });
+
+    const sampleWindowMs = 192;
+    const stepMs = 16;
+    let bestFrame = null;
+
+    for (let offsetMs = 0; offsetMs <= sampleWindowMs; offsetMs += stepMs) {
+      const frame = await sampleCriticalSwingOverlapFrame(offsetMs);
+      const visual = summarizeVisualState(frame.snapshot);
+      const isCandidate = (
+        visual.foregroundSeverity === 'swing' &&
+        visual.backgroundSeverity === 'critical' &&
+        visual.bannerVisible === false &&
+        visual.combatFeed?.emphasis === 'hero' &&
+        frame.feed.emphasis === 'hero' &&
+        frame.feed.opacity > 0.01
+      );
+      if (isCandidate) {
+        const shouldReplace = !bestFrame ||
+          frame.feed.opacity > bestFrame.feed.opacity + 0.0001 ||
+          (
+            Math.abs(frame.feed.opacity - bestFrame.feed.opacity) <= 0.0001 &&
+            frame.offsetMs < bestFrame.offsetMs
+          );
+        if (shouldReplace) {
+          bestFrame = frame;
+          await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => resolve())));
+          await page.evaluate(() => {
+            document.getElementById('combatFeedCapture')?.remove();
+            const source = document.getElementById('combatFeed');
+            if (!source) return;
+            const rect = source.getBoundingClientRect();
+            const clone = source.cloneNode(true);
+            clone.id = 'combatFeedCapture';
+            clone.style.position = 'fixed';
+            clone.style.left = '24px';
+            clone.style.top = '24px';
+            clone.style.bottom = 'auto';
+            clone.style.transform = 'none';
+            clone.style.opacity = '1';
+            clone.style.margin = '0';
+            clone.style.zIndex = '99999';
+            clone.style.pointerEvents = 'none';
+            clone.style.width = `${Math.ceil(rect.width)}px`;
+            clone.style.maxWidth = 'none';
+            document.body.appendChild(clone);
+          });
+          await page.locator('#combatFeedCapture').screenshot({
+            path: path.join(args.outDir, 'critical-plus-swing-peak.png'),
+            type: 'png'
+          });
+          await page.evaluate(() => {
+            document.getElementById('combatFeedCapture')?.remove();
+          });
+        }
+      }
+      if (offsetMs < sampleWindowMs) {
+        await page.evaluate((ms) => {
+          window.phase21TestApi.advance(ms);
+        }, stepMs);
+      }
+    }
+
+    const peakSnapshot = bestFrame
+      ? {
+          ...bestFrame.snapshot,
+          peakFeedOpacity: Number(bestFrame.feed.opacity.toFixed(4)),
+          peakScreenshot: 'critical-plus-swing-peak.png',
+          peakFrameOffsetMs: bestFrame.offsetMs
+        }
+      : {
+          ...(await page.evaluate(() => window.phase21TestApi.snapshot())),
+          peakFeedOpacity: null,
+          peakScreenshot: null,
+          peakFrameOffsetMs: null
+        };
+
+    const failures = [];
+    const visual = summarizeVisualState(peakSnapshot);
+    expect(visual.severity === 'swing', 'critical-plus-swing-overlap severity should resolve to swing', failures);
+    expect(visual.foregroundSeverity === 'swing', 'critical-plus-swing-overlap foregroundSeverity should be swing', failures);
+    expect(visual.backgroundSeverity === 'critical', 'critical-plus-swing-overlap backgroundSeverity should stay critical', failures);
+    expect(visual.bannerVisible === false, 'critical-plus-swing-overlap should suppress the center banner', failures);
+    expect(visual.layerSeverities?.feed === 'swing', 'critical-plus-swing-overlap feed layer should be swing', failures);
+    expect(visual.layerSeverities?.pulse === 'swing', 'critical-plus-swing-overlap pulse layer should be swing', failures);
+    expect(visual.layerSeverities?.camera === 'swing', 'critical-plus-swing-overlap camera layer should be swing', failures);
+    expect(visual.layerSeverities?.badge === 'critical', 'critical-plus-swing-overlap badge layer should remain critical', failures);
+    expect(visual.layerSeverities?.vignette === 'critical', 'critical-plus-swing-overlap vignette layer should remain critical', failures);
+    expect(visual.combatFeed?.emphasis === 'hero', 'critical-plus-swing-overlap combatFeed should use hero emphasis', failures);
+    expect(typeof peakSnapshot.peakFeedOpacity === 'number', 'critical-plus-swing-overlap should report peakFeedOpacity', failures);
+    expect(peakSnapshot.peakFeedOpacity > 0.7, 'critical-plus-swing-overlap peakFeedOpacity should exceed 0.7', failures);
+    expect(peakSnapshot.peakScreenshot === 'critical-plus-swing-peak.png', 'critical-plus-swing-overlap should report peakScreenshot', failures);
+    expect(Number.isFinite(peakSnapshot.peakFrameOffsetMs), 'critical-plus-swing-overlap should report peakFrameOffsetMs', failures);
+
+    return scenarioResult('critical-plus-swing-overlap', peakSnapshot, failures);
   };
 
   const results = [];
@@ -196,31 +355,7 @@ async function main() {
     }
   ));
 
-  results.push(await runScenario(
-    'critical-plus-swing-overlap',
-    () => {
-      const api = window.phase21TestApi;
-      api.startMatch('duel', { forcePlaying: true });
-      api.setEntityHp('p1', 20);
-      api.advance(180);
-      api.setEntityHp('p2', 10);
-      return api.firePlayerAtTeam('p2', { resetFeedback: false });
-    },
-    (snapshot, failures) => {
-      const visual = summarizeVisualState(snapshot);
-      expect(visual.severity === 'swing', 'critical-plus-swing-overlap severity should resolve to swing', failures);
-      expect(visual.foregroundSeverity === 'swing', 'critical-plus-swing-overlap foregroundSeverity should be swing', failures);
-      expect(visual.backgroundSeverity === 'critical', 'critical-plus-swing-overlap backgroundSeverity should stay critical', failures);
-      expect(visual.bannerVisible === false, 'critical-plus-swing-overlap should suppress the center banner', failures);
-      expect(visual.layerSeverities?.feed === 'swing', 'critical-plus-swing-overlap feed layer should be swing', failures);
-      expect(visual.layerSeverities?.pulse === 'swing', 'critical-plus-swing-overlap pulse layer should be swing', failures);
-      expect(visual.layerSeverities?.camera === 'swing', 'critical-plus-swing-overlap camera layer should be swing', failures);
-      expect(visual.layerSeverities?.badge === 'critical', 'critical-plus-swing-overlap badge layer should remain critical', failures);
-      expect(visual.layerSeverities?.vignette === 'critical', 'critical-plus-swing-overlap vignette layer should remain critical', failures);
-      expect(visual.combatFeed?.emphasis === 'hero', 'critical-plus-swing-overlap combatFeed should use hero emphasis', failures);
-    },
-    'critical-plus-swing.png'
-  ));
+  results.push(await runCriticalSwingOverlapScenario());
 
   results.push(await runScenario(
     'deathmatch-compact-calm',

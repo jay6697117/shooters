@@ -1288,7 +1288,7 @@
 	          <div id="dash">闪避<div class="cooldown"></div></div>
 	        </div>
 
-        <div id="banner">第一回合 · 开始！</div>
+        <div id="banner" data-suppressed="false">第一回合 · 开始！</div>
         <div id="suddenDeath">殊死一搏</div>
 
 	        <div id="menuOverlay" class="overlay visible">
@@ -1356,7 +1356,7 @@
         <div id="lowHpVignette"></div>
         <div id="dramaticOverlay"></div>
         <div id="screenPulse" data-kind="idle" data-severity="calm"></div>
-        <div id="combatFeed" data-kind="idle" data-severity="calm">
+        <div id="combatFeed" data-kind="idle" data-severity="calm" data-emphasis="standard">
           <div id="combatFeedLabel">战场稳定</div>
           <div id="combatFeedMeta">先观察，再压枪。</div>
         </div>
@@ -3732,6 +3732,12 @@
       return severity ? getDangerSeverityConfig(state.gameMode, severity) : null;
     }
 
+    function getSwingResolveDelay(modeId = state.gameMode) {
+      const swingProfile = getDangerSeverityConfig(modeId, 'swing');
+      const settleMs = Math.ceil(((swingProfile?.feedDuration || 0.62) + 0.9) * 1000);
+      return Math.max(1200, settleMs);
+    }
+
     function getCurrentDangerConfig() {
       const severity = getBadgeSeverity();
       return severity ? getDangerSeverityConfig(state.gameMode, severity) : null;
@@ -3859,6 +3865,7 @@
       fx.visualEventLog = [];
       fx.combatFeedKind = 'idle';
       fx.combatFeedSeverity = 'calm';
+      fx.combatFeedEmphasis = 'standard';
       fx.combatFeedLabel = '战场稳定';
       fx.combatFeedMeta = '先观察，再压枪。';
       fx.combatFeedTimer = 0;
@@ -3891,6 +3898,7 @@
       if (combatFeedEl) {
         combatFeedEl.dataset.kind = 'idle';
         combatFeedEl.dataset.severity = 'calm';
+        combatFeedEl.dataset.emphasis = 'standard';
         combatFeedEl.style.opacity = '0';
         combatFeedEl.style.transform = 'translateX(-50%) translateY(8px) scale(0.98)';
         combatFeedEl.style.borderColor = 'rgba(255, 255, 255, 0.08)';
@@ -3978,8 +3986,10 @@
     function setCombatFeed(kind, label, meta, duration = 0.4, options = {}) {
       const severity = options.severity || 'calm';
       const severityProfile = options.severityProfile || null;
+      const emphasis = options.emphasis || severityProfile?.feedEmphasis || 'standard';
       fx.combatFeedKind = kind;
       fx.combatFeedSeverity = severity;
+      fx.combatFeedEmphasis = emphasis;
       fx.combatFeedLabel = label;
       fx.combatFeedMeta = meta;
       fx.combatFeedTimer = duration;
@@ -3989,6 +3999,7 @@
       if (!combatFeedEl) return;
       combatFeedEl.dataset.kind = kind;
       combatFeedEl.dataset.severity = severity;
+      combatFeedEl.dataset.emphasis = emphasis;
       combatFeedEl.style.borderColor = severityProfile?.feedAccent || 'rgba(255, 255, 255, 0.08)';
       combatFeedEl.style.boxShadow = severityProfile
         ? `0 16px 26px rgba(0, 0, 0, 0.16), 0 0 24px ${severityProfile.feedAccent}`
@@ -4143,11 +4154,15 @@
             combatFeedEl.style.transform = 'translateX(-50%) translateY(8px) scale(0.98)';
             combatFeedEl.dataset.kind = 'idle';
             combatFeedEl.dataset.severity = 'calm';
+            combatFeedEl.dataset.emphasis = 'standard';
             fx.combatFeedSeverity = 'calm';
+            fx.combatFeedEmphasis = 'standard';
           }
         } else {
           combatFeedEl.style.opacity = '0';
           combatFeedEl.style.transform = 'translateX(-50%) translateY(8px) scale(0.98)';
+          combatFeedEl.dataset.emphasis = 'standard';
+          fx.combatFeedEmphasis = 'standard';
         }
       }
       if (!shotConfirmEl) return;
@@ -4270,6 +4285,9 @@
               severityProfile: foregroundAccepted ? resultSeverityConfig : null
             }
           );
+        }
+        if (event.type === 'kill') {
+          hideBanner({ suppressOnly: false });
         }
         pushVisualEvent(event.type, {
           weaponId: event.weaponId,
@@ -6055,7 +6073,7 @@
             if (state.mode === 'roundIntro') setMode('playing');
           }, 1000);
         }
-      }, 1200);
+      }, getSwingResolveDelay());
     }
 
     function triggerKillCam(winnerTeam) {
@@ -7487,12 +7505,14 @@
         vignette: Boolean(layerSeverities.vignette),
         camera: Boolean(layerSeverities.camera)
       };
+      const bannerVisible = bannerEl.classList.contains('show') && bannerEl.dataset.suppressed !== 'true';
       const visualState = {
         density: getHudVisualProfile().density,
         danger: severity,
         severity: severity,
         foregroundSeverity: foregroundSeverity,
         backgroundSeverity: backgroundSeverity,
+        bannerVisible: bannerVisible,
         persistentDanger: fx.persistentDanger,
         lastDangerSource: fx.lastDangerSource,
         layerSeverities: layerSeverities,
@@ -7502,6 +7522,7 @@
         combatFeed: fx.combatFeedTimer > 0 ? {
           kind: fx.combatFeedKind,
           severity: fx.combatFeedSeverity !== 'calm' ? fx.combatFeedSeverity : null,
+          emphasis: fx.combatFeedEmphasis,
           label: fx.combatFeedLabel,
           meta: fx.combatFeedMeta
         } : null,

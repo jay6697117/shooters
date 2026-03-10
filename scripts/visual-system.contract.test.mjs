@@ -101,4 +101,31 @@ test('visual system contract exposes unified tuning and runtime seams', async ()
   assert.match(html, /layerSeverities\s*:/, 'visualState must expose layerSeverities');
   assert.match(html, /activeLayers\s*:/, 'visualState must expose activeLayers');
   assert.match(html, /window\.advanceTime\s*=/, 'index.html must expose window.advanceTime for deterministic stepping');
+  assert.match(
+    html,
+    /bannerVisible\s*:/,
+    'visualState must expose bannerVisible for hero feed regression capture'
+  );
+
+  const browserTestSource = await readFile(browserTestPath, 'utf8');
+  assert.match(
+    browserTestSource,
+    /critical-plus-swing-peak\.png/,
+    'browser regression must capture a peak hero feed screenshot'
+  );
+  assert.match(
+    browserTestSource,
+    /peakFeedOpacity/,
+    'browser regression must record peakFeedOpacity metadata'
+  );
+  assert.match(
+    browserTestSource,
+    /peakScreenshot/,
+    'browser regression must record peakScreenshot metadata'
+  );
+  assert.match(
+    browserTestSource,
+    /peakFrameOffsetMs/,
+    'browser regression must record peakFrameOffsetMs metadata'
+  );
 });

@@ -108,3 +108,14 @@ Original prompt: PLEASE IMPLEMENT THIS PLAN for the v1.0 beginner-friendly diffi
   - `node scripts/visual-system.browser.test.mjs --url http://127.0.0.1:4173/index.html --out-dir output/visual-regression` passed all 8 scenarios and produced `results.json`, `critical.png`, and `critical-plus-swing.png`.
   - `runtimeErrors` from the browser regression run remained empty, and Playwright console/page error count stayed `0`.
   - Ran develop-web-game client against http://127.0.0.1:4173/index.html and reviewed `output/visual-pass-client-round3/shot-0.png` + `state-0.json`; no `errors-0.json` was produced.
+
+- 2026-03-10 visual pass round 4:
+- Promoted `swing` into a dedicated hero presentation lane: `src/visual-tuning.js` now gives `swing` higher feed lift/scale/duration plus `feedEmphasis='hero'`, while `index.html` adds a hero feed style with larger typography, stronger panel weight, and compact-mode overrides.
+- Added banner lifecycle control to runtime HUD flow: entering `playing` now clears leftover center banners, kill-confirm swing feedback explicitly dismisses competing banners, and round resolution waits on a `getSwingResolveDelay()` window so the conclusion layer has more breathing room before the next intro phase.
+- Extended `render_game_to_text().visualState` with `bannerVisible`, and extended `combatFeed` snapshots with `emphasis` so overlap scenarios can assert both banner retreat and hero presentation without relying on guesswork.
+- Hardened `scripts/visual-system.browser.test.mjs` for the overlap artifact itself: the scenario now captures a deterministic hero frame by keeping `resetFeedback: false`, advancing into the swing window, and clearing stale scheduled timers before the screenshot is written.
+- Verification results:
+  - `node --test scripts/visual-system.contract.test.mjs` passed after the round-four HUD/runtime additions.
+  - `node scripts/visual-system.browser.test.mjs --url http://127.0.0.1:4173/index.html --out-dir output/visual-regression-round4-green4` passed all 8 scenarios with `bannerVisible=false` and `combatFeed.emphasis='hero'` in `critical-plus-swing-overlap`.
+  - `runtimeErrors` in `output/visual-regression-round4-green4/results.json` remained empty.
+  - Ran develop-web-game client against http://127.0.0.1:4173/index.html and reviewed `output/visual-pass-client-round4/shot-0.png` + `state-0.json`; no `errors-0.json` was produced.
